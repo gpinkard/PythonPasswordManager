@@ -4,6 +4,18 @@ Things to do:
 """
 import os.path
 import getpass
+import sys
+
+def main():
+    print('\n=== Python Password Manager ===\n')
+    key = ''
+    if isFirstSession():
+        key = firstSession()
+    else:
+        key = beginSession()
+    printHelp()
+    while(True):
+        getOperation()
 
 def firstSession():
     print('Welcome. Please enter a secure master password.\nThis password must be at least 10 characters in length.')
@@ -26,6 +38,7 @@ def firstSession():
 def beginSession():
     print('Welcome. Please enter your master password.')
     password = getpass.getpass('Master password: ')
+    # ask for password twice so we don't have to save hash
     confirm_password = 'confirm'
     confirm_password = getpass.getpass('Confirm password: ')
     if password != confirm_password:
@@ -35,11 +48,26 @@ def beginSession():
     # derive key, return key
 
 def getOperation():
-    return input('Select an operation (add / retrieve / delete / help / quit): ').lower()
+    cmd = input('Select an operation (add / delete / help / quit / retrieve): ').lower()
+    if cmd == 'add':
+        addPassword()
+    elif cmd == 'delete':
+        deletePassword()
+    elif cmd == 'help':
+        printHelp()
+    elif cmd == 'quit':
+        print('Goodbye')
+        sys.exit(0)
+    elif cmd == 'retrive':
+        retrievePassword()
+    else:
+        print(cmd + ' is not a recognized command. Try \'help\'')
 
 # to implement
 
 def isFirstSession():
+    if os.path.exists('.__META__.'):
+        return False
     return True
 
 def deriveKey(password, salt):
@@ -60,15 +88,14 @@ def retrievePassword(key):
 def deletePassword():
     return
 
+def printHelp():
+    print('Possible Operatons\n')
+    print('add - [domain] add new username/domain and password combination')
+    print('delete [domain] - remove a username/domain and password combination')
+    print('help - print this help')
+    print('quit - exit this program')
+    print('retrieve [domain] - retrieve password associated with domain')
+    print('')
 
-def main():
-    print('python password manager')
-    key = ''
-    if isFirstSession():
-        key = firstSession()
-    else:
-        key = beginSession()
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
-
