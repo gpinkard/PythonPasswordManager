@@ -69,11 +69,8 @@ def is_first_session():
         return False
     return True
 
-def derive_key(password, salt):
-    return
-
 def write_key_hash(keyHash):
-    return
+    pass
 
 def write_salt(salt):
     fi = file.open('.__META__.')
