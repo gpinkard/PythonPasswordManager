@@ -9,15 +9,14 @@ import sys
 def main():
     print('\n=== Python Password Manager ===\n')
     key = ''
-    if isFirstSession():
-        key = firstSession()
+    if is_first_session():
+        key = first_session()
     else:
-        key = beginSession()
-    printHelp()
+        key = begin_session()
     while(True):
-        getOperation()
+        get_operation()
 
-def firstSession():
+def first_session():
     print('Welcome. Please enter a secure master password.\nThis password must be at least 10 characters in length.')
     password = 'password' 
     confirm_password = 'confirm'
@@ -35,7 +34,7 @@ def firstSession():
     # return key
         
 
-def beginSession():
+def begin_session():
     print('Welcome. Please enter your master password.')
     password = getpass.getpass('Master password: ')
     # ask for password twice so we don't have to save hash
@@ -47,49 +46,50 @@ def beginSession():
     # authenticate password (maybe ??)
     # derive key, return key
 
-def getOperation():
+def get_operation():
     cmd = input('Select an operation (add / delete / help / quit / retrieve): ').lower()
     if cmd == 'add':
-        addPassword()
+        add_password()
     elif cmd == 'delete':
-        deletePassword()
+        delete_password()
     elif cmd == 'help':
-        printHelp()
+        print_help()
     elif cmd == 'quit':
-        print('Goodbye')
+        print('Goodbye.')
         sys.exit(0)
     elif cmd == 'retrive':
         retrievePassword()
     else:
-        print(cmd + ' is not a recognized command. Try \'help\'')
+        print(cmd + ' is not a recognized command. Try \'help\'.')
 
 # to implement
 
-def isFirstSession():
+def is_first_session():
     if os.path.exists('.__META__.'):
         return False
     return True
 
-def deriveKey(password, salt):
+def derive_key(password, salt):
     return
 
-def writeKeyHash(keyHash):
+def write_key_hash(keyHash):
     return
 
-def writeSalt(salt):
+def write_salt(salt):
+    fi = file.open('.__META__.')
+    data = fi.read('\n')
+    data[0] = salt
+    fi.write(data)
+    fi.close()
+
+def add_password(key):
     return
 
-def addPassword(key):
+def delete_password():
     return
 
-def retrievePassword(key):
-    return
-
-def deletePassword():
-    return
-
-def printHelp():
-    print('Possible Operatons\n')
+def print_help():
+    print('Python Password Manager Help Dialog\n')
     print('add - [domain] add new username/domain and password combination')
     print('delete [domain] - remove a username/domain and password combination')
     print('help - print this help')
