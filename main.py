@@ -4,8 +4,19 @@ Things to do:
 """
 import os.path
 import getpass
+import sys
 
-def firstSession():
+def main():
+    print('\n=== Python Password Manager ===\n')
+    key = ''
+    if is_first_session():
+        key = first_session()
+    else:
+        key = begin_session()
+    while(True):
+        get_operation()
+
+def first_session():
     print('Welcome. Please enter a secure master password.\nThis password must be at least 10 characters in length.')
     password = 'password' 
     confirm_password = 'confirm'
@@ -23,7 +34,7 @@ def firstSession():
     # return key
         
 
-def beginSession():
+def begin_session():
     print('Welcome. Please enter your master password.')
     password = getpass.getpass('Master password: ')
     confirm_password = getpass.getpass('Confirm password: ')
@@ -33,38 +44,53 @@ def beginSession():
     # authenticate password (maybe ??)
     # derive key, return key
 
-def getOperation():
-    return input('Select an operation (add / retrieve / delete / help / quit): ').lower()
+def get_operation():
+    cmd = input('Select an operation (add / delete / help / quit / retrieve): ').lower()
+    if cmd == 'add':
+        add_password()
+    elif cmd == 'delete':
+        delete_password()
+    elif cmd == 'help':
+        print_help()
+    elif cmd == 'quit':
+        print('Goodbye.')
+        sys.exit(0)
+    elif cmd == 'retrive':
+        retrievePassword()
+    else:
+        print(cmd + ' is not a recognized command. Try \'help\'.')
 
 # to implement
 
-def isFirstSession():
+def is_first_session():
+    if os.path.exists('.__META__.'):
+        return False
     return True
 
-def writeKeyHash(keyHash):
+def write_key_hash(keyHash):
+    pass
+
+def write_salt(salt):
+    fi = file.open('.__META__.')
+    data = fi.read('\n')
+    data[0] = salt
+    fi.write(data)
+    fi.close()
+
+def add_password(key):
     return
 
-def writeSalt(salt):
+def delete_password():
     return
 
-def addPassword(key):
-    return
+def print_help():
+    print('Python Password Manager Help Dialog\n')
+    print('add - [domain] add new username/domain and password combination')
+    print('delete [domain] - remove a username/domain and password combination')
+    print('help - print this help')
+    print('quit - exit this program')
+    print('retrieve [domain] - retrieve password associated with domain')
+    print('')
 
-def retrievePassword(key):
-    return
-
-def deletePassword():
-    return
-
-
-def main():
-    print('python password manager')
-    key = ''
-    if isFirstSession():
-        key = firstSession()
-    else:
-        key = beginSession()
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
-
