@@ -26,7 +26,6 @@ def firstSession():
 def beginSession():
     print('Welcome. Please enter your master password.')
     password = getpass.getpass('Master password: ')
-    confirm_password = 'confirm'
     confirm_password = getpass.getpass('Confirm password: ')
     if password != confirm_password:
         print('Passwords do not match.\n')
@@ -41,9 +40,6 @@ def getOperation():
 
 def isFirstSession():
     return True
-
-def deriveKey(password, salt):
-    return
 
 def writeKeyHash(keyHash):
     return
