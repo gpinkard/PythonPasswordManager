@@ -70,9 +70,6 @@ def isFirstSession():
         return False
     return True
 
-def deriveKey(password, salt):
-    return
-
 def writeKeyHash(keyHash):
     return
 
