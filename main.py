@@ -99,8 +99,9 @@ def retrieve_password():
     #
     return
 
-def get_enc_password(account):
+def get_enc_stuff(account):
     #enc_password = parse file to get password
+    #enc_iv = next line
     return 
 
 def decrypt_password(enc_stuff):
@@ -109,14 +110,14 @@ def decrypt_password(enc_stuff):
     enc_iv = enc_stuff[-32:]
     salt = get_salt()
     password = getpass.getpass('Master password: ')
-    key = PBKDF2(password, salt, 32, count=1000)
+    key = PBKDF2(password, salt, 32, count=5000)
     #remove password from memory
     ecb_cipher = AES.new(key, AES.MODE_ECB)
-    #iv = ecb_cipher.decrypt(enc_iv)
-    #cbc_cipher = AES.new(key, AES.MODE_CBC, iv)
-    #remove key from memory
-    #padded_password = cbc_cipher.decrypt(enc_passowrd)
-    #password = unpad(padded_password, AES.block_size)
+    iv = ecb_cipher.decrypt(enc_iv)
+    cbc_cipher = AES.new(key, AES.MODE_CBC, iv)
+    #remove key, iv from memory
+    padded_password = cbc_cipher.decrypt(enc_passowrd)
+    password = unpad(padded_password, AES.block_size)
     #copy password to clipboard(??)
     return
 
