@@ -5,6 +5,7 @@ Things to do:
 import os.path
 import getpass
 import sys
+from Crypto import Random
 
 from Crypto.Cipher import AES
 from Crypto.Util import Padding
@@ -73,12 +74,11 @@ def is_first_session():
 def write_key_hash(keyHash):
     pass
 
-def write_salt(salt):
-    fi = file.open('.__META__.', 'wb')
-    data = fi.read('\n')
-    data[0] = salt
-    fi.write(data)
-    fi.close()
+def write_salt():
+    fi = file.open('.__META__.')
+    salt = Random.get_random_bytes(AES.block_size)
+    fi = file.open('.__META__.', 'w')
+    fi.write(salt)
 
 def get_salt():
     fi = file.open('.__META__.', 'rb')
