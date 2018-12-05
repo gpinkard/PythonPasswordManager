@@ -103,8 +103,10 @@ def decrypt_password(enc_stuff):
     #if we just want to pass both as one param:
     enc_password = enc_stuff[:-32]
     enc_iv = enc_stuff[-32:]
+    salt = get_salt()
     #get master password
     #derive key from pasword
+    #pwdkey = PBKDF2(password, salt, 32, count=1000)
     #remove password from memory
     #ecb_cipher = AES.new(key, AES.MODE_ECB)
     #iv = ecb_cipher.decrypt(enc_iv)
