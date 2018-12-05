@@ -74,13 +74,24 @@ def write_key_hash(keyHash):
     pass
 
 def write_salt(salt):
-    fi = file.open('.__META__.')
+    fi = file.open('.__META__.', 'wb')
     data = fi.read('\n')
     data[0] = salt
     fi.write(data)
     fi.close()
 
-def add_password(key):
+def get_salt():
+    fi = file.open('.__META__.', 'rb')
+    salt = fi.readline()
+    fi.close()
+    return salt
+
+def add_password():
+    #derive key from password
+    return
+
+def add_random_password():
+    #if user doesn't supply a password
     return
 
 def retrieve_enc_stuff(account):
