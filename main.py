@@ -5,6 +5,7 @@ Things to do:
 import os.path
 import getpass
 import sys
+from Crypto import Random
 
 from Crypto.Cipher import AES
 from Crypto.Util import Padding
@@ -72,12 +73,11 @@ def is_first_session():
 def write_key_hash(keyHash):
     pass
 
-def write_salt(salt):
-    fi = file.open('.__META__.', 'wb')
-    data = fi.read('\n')
-    data[0] = salt
-    fi.write(data)
-    fi.close()
+def write_salt():
+    fi = file.open('.__META__.')
+    salt = Random.get_random_bytes(AES.block_size)
+    fi = file.open('.__META__.', 'w')
+    fi.write(salt)
 
 def get_salt():
     fi = file.open('.__META__.', 'rb')
@@ -102,8 +102,10 @@ def decrypt_password(enc_stuff):
     #if we just want to pass both as one param:
     enc_password = enc_stuff[:-32]
     enc_iv = enc_stuff[-32:]
+    salt = get_salt()
     #get master password
     #derive key from pasword
+    #pwdkey = PBKDF2(password, salt, 32, count=1000)
     #remove password from memory
     #ecb_cipher = AES.new(key, AES.MODE_ECB)
     #iv = ecb_cipher.decrypt(enc_iv)
