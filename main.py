@@ -5,6 +5,7 @@ Things to do:
 import os.path
 import getpass
 import sys
+from Crypto import Random
 
 def main():
     print('\n=== Python Password Manager ===\n')
@@ -74,10 +75,10 @@ def write_key_hash(keyHash):
 
 def write_salt(salt):
     fi = file.open('.__META__.')
-    data = fi.read('\n')
-    data[0] = salt
-    fi.write(data)
-    fi.close()
+    salt = Random.get_random_bytes(AES.block_size)
+    fi = file.open('.__META__.', 'w')
+    fi.write(salt)
+
 
 def add_password(key):
     return
