@@ -96,12 +96,15 @@ def add_random_password():
 def retrieve_password():
     #parse password file to find password, iv
     #to_return = enc_password + enc_iv
-    #
+    #account = ask for account or URL
+    #enc_stuff = get_enc_stuff(account)
+    #decrypt_password(enc_stuff), which copies password to clipboard
     return
 
 def get_enc_stuff(account):
     #enc_password = parse file to get password
     #enc_iv = next line
+    #enc_stuff = enc_password + enc_iv
     return 
 
 def decrypt_password(enc_stuff):
