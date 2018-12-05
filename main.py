@@ -7,6 +7,9 @@ import getpass
 import sys
 from Crypto import Random
 
+from Crypto.Cipher import AES
+from Crypto.Util import Padding
+
 def main():
     print('\n=== Python Password Manager ===\n')
     key = ''
@@ -38,8 +41,6 @@ def first_session():
 def begin_session():
     print('Welcome. Please enter your master password.')
     password = getpass.getpass('Master password: ')
-    # ask for password twice so we don't have to save hash
-    confirm_password = 'confirm'
     confirm_password = getpass.getpass('Confirm password: ')
     if password != confirm_password:
         print('Passwords do not match.\n')
@@ -74,13 +75,53 @@ def write_key_hash(keyHash):
     pass
 
 def write_salt(salt):
+<<<<<<< HEAD
     fi = file.open('.__META__.')
     salt = Random.get_random_bytes(AES.block_size)
     fi = file.open('.__META__.', 'w')
     fi.write(salt)
 
+=======
+    fi = file.open('.__META__.', 'wb')
+    data = fi.read('\n')
+    data[0] = salt
+    fi.write(data)
+    fi.close()
+>>>>>>> 02af4917fd9d86d42abe4b1b15fad11c3ead0336
 
-def add_password(key):
+def get_salt():
+    fi = file.open('.__META__.', 'rb')
+    salt = fi.readline()
+    fi.close()
+    return salt
+
+def add_password():
+    #derive key from password
+    return
+
+def add_random_password():
+    #if user doesn't supply a password
+    return
+
+def retrieve_enc_stuff(account):
+    #parse password file to find password, iv
+    #to_return = enc_password + enc_iv
+    return
+
+def decrypt_password(enc_stuff):
+    #if we just want to pass both as one param:
+    enc_password = enc_stuff[:-32]
+    enc_iv = enc_stuff[-32:]
+    #get master password
+    #derive key from pasword
+    #remove password from memory
+    #ecb_cipher = AES.new(key, AES.MODE_ECB)
+    #iv = ecb_cipher.decrypt(enc_iv)
+    #cbc_cipher = AES.new(key, AES.MODE_CBC, iv)
+    #remove key from memory
+    #padded_password = cbc_cipher.decrypt(enc_passowrd)
+    #password = unpad(padded_password, AES.block_size)
+    #copy password to clipboard(??)
     return
 
 def delete_password():
