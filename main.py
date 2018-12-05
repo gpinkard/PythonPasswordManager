@@ -5,7 +5,6 @@ Things to do:
 import os.path
 import getpass
 import sys
-from Crypto import Random
 
 from Crypto.Cipher import AES
 from Crypto.Util import Padding
@@ -59,8 +58,8 @@ def get_operation():
     elif cmd == 'quit':
         print('Goodbye.')
         sys.exit(0)
-    elif cmd == 'retrive':
-        retrievePassword()
+    elif cmd == 'retrieve':
+        retrieve_password()
     else:
         print(cmd + ' is not a recognized command. Try \'help\'.')
 
@@ -94,21 +93,25 @@ def add_random_password():
     #if user doesn't supply a password
     return
 
-def retrieve_enc_stuff(account):
+def retrieve_password():
     #parse password file to find password, iv
     #to_return = enc_password + enc_iv
+    #
     return
+
+def get_enc_password(account):
+    #enc_password = parse file to get password
+    return 
 
 def decrypt_password(enc_stuff):
     #if we just want to pass both as one param:
     enc_password = enc_stuff[:-32]
     enc_iv = enc_stuff[-32:]
     salt = get_salt()
-    #get master password
-    #derive key from pasword
-    #pwdkey = PBKDF2(password, salt, 32, count=1000)
+    password = getpass.getpass('Master password: ')
+    key = PBKDF2(password, salt, 32, count=1000)
     #remove password from memory
-    #ecb_cipher = AES.new(key, AES.MODE_ECB)
+    ecb_cipher = AES.new(key, AES.MODE_ECB)
     #iv = ecb_cipher.decrypt(enc_iv)
     #cbc_cipher = AES.new(key, AES.MODE_CBC, iv)
     #remove key from memory
