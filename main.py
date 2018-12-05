@@ -1,4 +1,4 @@
-"""
+"
 Things to do:
 1. check if there is a meta file (of the form '#META#')
 """
@@ -32,7 +32,6 @@ def first_session():
     # derive key, hash
     # write key hash to file (maybe ??)
     # return key
-        
 
 def begin_session():
     print('Welcome. Please enter your master password.')
