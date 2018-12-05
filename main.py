@@ -120,7 +120,6 @@ def delete_password(account_url):
     tmp = ''
     for i in range(0, len(data)):
         if i % 4 == 0:
-           #print(data[i])
            if data[i] == account_url:
                pass
         tmp = tmp + data[i]
@@ -139,7 +138,4 @@ def print_help():
     print('')
 
 if __name__ == '__main__':
-    blah = [0,1,2,3,4,5,6,7,8,9,10,11,12,13]
-    delete_password(2, blah)
-    delete_password(5, blah)
-    #main()
+    main()
