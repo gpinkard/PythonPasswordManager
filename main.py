@@ -6,6 +6,7 @@ import os.path
 import getpass
 import sys
 from Crypto.Random import get_random_bytes
+
 from Crypto.Cipher import AES
 from Crypto.Util import Padding
 def main():
@@ -57,8 +58,8 @@ def get_operation():
     elif cmd == 'quit':
         print('Goodbye.')
         sys.exit(0)
-    elif cmd == 'retrive':
-        retrievePassword()
+    elif cmd == 'retrieve':
+        retrieve_password()
     else:
         print(cmd + ' is not a recognized command. Try \'help\'.')
 
@@ -92,24 +93,31 @@ def add_random_password():
     #if user doesn't supply a password
     return
 
-def retrieve_enc_stuff(account):
+def retrieve_password():
     #parse password file to find password, iv
     #to_return = enc_password + enc_iv
+    #
     return
+
+def get_enc_stuff(account):
+    #enc_password = parse file to get password
+    #enc_iv = next line
+    return 
 
 def decrypt_password(enc_stuff):
     #if we just want to pass both as one param:
     enc_password = enc_stuff[:-32]
     enc_iv = enc_stuff[-32:]
-    #get master password
-    #derive key from pasword
+    salt = get_salt()
+    password = getpass.getpass('Master password: ')
+    key = PBKDF2(password, salt, 32, count=5000)
     #remove password from memory
-    #ecb_cipher = AES.new(key, AES.MODE_ECB)
-    #iv = ecb_cipher.decrypt(enc_iv)
-    #cbc_cipher = AES.new(key, AES.MODE_CBC, iv)
-    #remove key from memory
-    #padded_password = cbc_cipher.decrypt(enc_passowrd)
-    #password = unpad(padded_password, AES.block_size)
+    ecb_cipher = AES.new(key, AES.MODE_ECB)
+    iv = ecb_cipher.decrypt(enc_iv)
+    cbc_cipher = AES.new(key, AES.MODE_CBC, iv)
+    #remove key, iv from memory
+    padded_password = cbc_cipher.decrypt(enc_passowrd)
+    password = unpad(padded_password, AES.block_size)
     #copy password to clipboard(??)
     return
 
