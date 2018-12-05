@@ -119,7 +119,7 @@ def delete_password(account_url):
     fi.close()
     tmp = ''
     for i in range(0, len(data)):
-        if i % 3 == 0:
+        if i % 4 == 0:
            #print(data[i])
            if data[i] == account_url:
                pass
