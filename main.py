@@ -5,11 +5,9 @@ Things to do:
 import os.path
 import getpass
 import sys
-from Crypto import Random
-
-from Crypto.Cipher import AES
-from Crypto.Util import Padding
-
+#from Crypto.Random import get_random_bytes
+#from Crypto.Cipher import AES
+#from Crypto.Util import Padding
 def main():
     print('\n=== Python Password Manager ===\n')
     key = ''
@@ -76,7 +74,7 @@ def write_key_hash(keyHash):
 
 def write_salt():
     fi = file.open('.__META__.')
-    salt = Random.get_random_bytes(AES.block_size)
+    #salt = Random.get_random_bytes(AES.block_size)
     fi = file.open('.__META__.', 'w')
     fi.write(salt)
 
@@ -115,8 +113,21 @@ def decrypt_password(enc_stuff):
     #copy password to clipboard(??)
     return
 
-def delete_password():
-    return
+def delete_password(account_url):
+    fi = file.open('.__PASS__.')
+    data = fi.read('\n')
+    fi.close()
+    tmp = ''
+    for i in range(0, len(data)):
+        if i % 3 == 0:
+           #print(data[i])
+           if data[i] == account_url:
+               pass
+        tmp = tmp + data[i]
+    fi.open('.__PASS__.')
+    fi.write(tmp)
+    fi.close()
+
 
 def print_help():
     print('Python Password Manager Help Dialog\n')
@@ -128,4 +139,7 @@ def print_help():
     print('')
 
 if __name__ == '__main__':
-    main()
+    blah = [0,1,2,3,4,5,6,7,8,9,10,11,12,13]
+    delete_password(2, blah)
+    delete_password(5, blah)
+    #main()
