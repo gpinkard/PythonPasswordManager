@@ -5,9 +5,9 @@ Things to do:
 import os.path
 import getpass
 import sys
-#from Crypto.Random import get_random_bytes
-#from Crypto.Cipher import AES
-#from Crypto.Util import Padding
+from Crypto.Random import get_random_bytes
+from Crypto.Cipher import AES
+from Crypto.Util import Padding
 def main():
     print('\n=== Python Password Manager ===\n')
     key = ''
@@ -74,7 +74,7 @@ def write_key_hash(keyHash):
 
 def write_salt():
     fi = file.open('.__META__.')
-    #salt = Random.get_random_bytes(AES.block_size)
+    salt = Random.get_random_bytes(AES.block_size)
     fi = file.open('.__META__.', 'w')
     fi.write(salt)
 
