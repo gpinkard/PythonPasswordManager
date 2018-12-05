@@ -44,7 +44,6 @@ def begin_session():
     if password != confirm_password:
         print('Passwords do not match.\n')
         quit()
-    # authenticate password (maybe ??)
     # derive key, return key
 
 def get_operation():
@@ -58,7 +57,7 @@ def get_operation():
     elif cmd == 'quit':
         print('Goodbye.')
         sys.exit(0)
-    elif cmd == 'retrive':
+    elif cmd == 'retrieve':
         retrievePassword()
     else:
         print(cmd + ' is not a recognized command. Try \'help\'.')
@@ -86,6 +85,11 @@ def get_salt():
     return salt
 
 def add_password():
+    password = getpass.getpass('Master password: ')
+    confirm_password = getpass.getpass('Confirm password: ')
+    if password != confirm_password:
+        print('Passwords do not match.\n')
+        quit()
     #derive key from password
     return
 
