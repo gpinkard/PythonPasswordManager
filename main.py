@@ -5,10 +5,10 @@ Things to do:
 import os.path
 import getpass
 import sys
+from Crypto.Random import get_random_bytes
 
 from Crypto.Cipher import AES
 from Crypto.Util import Padding
-
 def main():
     print('\n=== Python Password Manager ===\n')
     key = ''
@@ -124,8 +124,20 @@ def decrypt_password(enc_stuff):
     #copy password to clipboard(??)
     return
 
-def delete_password():
-    return
+def delete_password(account_url):
+    fi = file.open('.__PASS__.')
+    data = fi.read('\n')
+    fi.close()
+    tmp = ''
+    for i in range(0, len(data)):
+        if i % 4 == 0:
+           if data[i] == account_url:
+               pass
+        tmp = tmp + data[i]
+    fi.open('.__PASS__.')
+    fi.write(tmp)
+    fi.close()
+
 
 def print_help():
     print('Python Password Manager Help Dialog\n')
