@@ -74,20 +74,11 @@ def is_first_session():
 def write_key_hash(keyHash):
     pass
 
-def write_salt(salt):
-<<<<<<< HEAD
+def write_salt():
     fi = file.open('.__META__.')
     salt = Random.get_random_bytes(AES.block_size)
     fi = file.open('.__META__.', 'w')
     fi.write(salt)
-
-=======
-    fi = file.open('.__META__.', 'wb')
-    data = fi.read('\n')
-    data[0] = salt
-    fi.write(data)
-    fi.close()
->>>>>>> 02af4917fd9d86d42abe4b1b15fad11c3ead0336
 
 def get_salt():
     fi = file.open('.__META__.', 'rb')
