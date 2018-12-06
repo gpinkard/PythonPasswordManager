@@ -94,23 +94,6 @@ def get_salt():
     fi.close()
     return salt
 
-#incorporated into add_account so no longer used:
-def add_password_dialog():
-    invalid_resp = True
-    while(invalid_resp):
-        print('Type "add" to add a password')
-        print('Type "rand" to generate and add a random password (more secure)')
-        print('Type cancel exit this dialog')
-        resp = input('> ').lower()
-        if resp == 'add':
-            add_account()
-            invalid_resp = False
-        elif resp == 'rand':
-            add_random_password()
-            invalid_resp = False
-        elif resp == 'cancel':
-            invalid_resp = False
-
 def add_account():
     url = ''
     account_id = ''
