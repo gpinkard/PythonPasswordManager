@@ -1,7 +1,3 @@
-"""
-Things to do:
-1. check if there is a meta file (of the form '#META#')
-"""
 import os.path
 import getpass
 import sys
@@ -121,7 +117,7 @@ def delete_password(account_url):
     for i in range(0, len(data)):
         if i % 4 == 0:
            if data[i] == account_url:
-               pass
+               i+=3
         tmp = tmp + data[i]
     fi.open('.__PASS__.')
     fi.write(tmp)
@@ -134,8 +130,7 @@ def print_help():
     print('delete [domain] - remove a username/domain and password combination')
     print('help - print this help')
     print('quit - exit this program')
-    print('retrieve [domain] - retrieve password associated with domain')
-    print('')
+    print('retrieve [domain] - retrieve password associated with domain\n')
 
 if __name__ == '__main__':
     main()
