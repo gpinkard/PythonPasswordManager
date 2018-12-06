@@ -14,6 +14,7 @@ import getpass
 import sys
 import pyperclip
 from Crypto.Random import get_random_bytes
+from Crypto.Random import random
 from Crypto.Cipher import AES
 from Crypto.Util import Padding
 from Crypto.Util import Counter
@@ -152,8 +153,7 @@ def enc_password():
     if password != confirm_password:
         print('Passwords do not match.\n')
         quit()
-#    salt = get_salt()
-    salt = Random.get_random_bytes(16)
+    salt = get_salt()
     key = PBKDF2(password, salt, 32, count = 5000)
     password = ''
     confirm_password = ''
@@ -170,10 +170,35 @@ def enc_password():
 
 def enc_random_password():
     #if user doesn't supply a password:
-    byte_password = Random.get_random_bytes(18)
+    
     password = getpass.getpass('Enter your master password: ')
-    #return enc_pass and enc_nonce
-    return
+    password = getpass.getpass('Master password: ')
+    confirm_password = getpass.getpass('Confirm password: ')
+        quit()
+    salt = get_salt()
+    key = PBKDF2(password, salt, 32, count = 5000)
+    password = ''
+    confirm_password = ''
+    
+    password_length = 0
+    while password_length < 8:
+        password_length = input("Enter the desired length of the account password (minimum 8) :")
+        if password_length < 8:
+            print("Password must be at least 8 characters long.")
+
+    for x in range(password_length):
+        random_ascii_value = random.randint(33,126)
+        password += chr(random_ascii_value)
+
+
+    mapped_password = map_password(password)
+    
+    nonce = Random.get_random_bytes(AES.block_size/2)
+    counter = Counter.new(4*AES.block_size, prefix = nonce, initial_value = 0)
+    cipher = AES.new(key, AES.MODE_CTR, counter=counter)
+
+    encrypted_password = cipher.encrypt(mapped_password.encode('utf-8'))
+    return encrypted_password 
 
 
 """
