@@ -1,5 +1,13 @@
-__author__ = "Ari Conati, Gabriel Pinkard, Lindsay Coffee-Johnson"
+__author__ = "Ari Conati, Gabriel Pinkard, and Lindsay Coffee-Johnson"
 __licence__ = "MIT"
+
+"""
+ENCRYPTED PASSWORD ENTRY FORMAT:
+URL
+username/id
+password
+iv
+"""
 
 import os.path
 import getpass
@@ -17,7 +25,7 @@ def main():
     else:
         key = begin_session()
     while(True):
-        get_operation()
+        get_cmd()
 
 def first_session():
     print('Welcome. Please enter a secure master password.\nThis password must be at least 10 characters in length.')
@@ -47,7 +55,7 @@ def begin_session():
     # authenticate password (maybe ??)
     # derive key, return key
 
-def get_operation():
+def get_cmd():
     cmd = input('Select an operation (add / delete / help / quit / retrieve): ').lower()
     if cmd == 'add':
         add_password()
@@ -93,19 +101,17 @@ def add_random_password():
     #if user doesn't supply a password
     return
 
-def retrieve_password():
-    #parse password file to find password, iv
-    #to_return = enc_password + enc_iv
-    #account = ask for account or URL
-    #enc_stuff = get_enc_stuff(account)
-    #decrypt_password(enc_stuff), which copies password to clipboard
-    return
-
-def get_enc_stuff(account):
-    #enc_password = parse file to get password
-    #enc_iv = next line
-    #enc_stuff = enc_password + enc_iv
-    return 
+"""
+retrieves encryped password and iv as a tuple given a URL name
+"""
+def retrieve_encrypted_data(url):
+    fi = open('.__PASS__.', 'r')
+    data = fi.read('\n')
+    fi.close()
+    for i in range(0, len(data)):
+        if data[i] == url:
+            return (data[i+2], data[i+3])
+    print('Error: ' + url + ' is not present in the password file')
 
 def decrypt_password(enc_stuff):
     #if we just want to pass both as one param:
