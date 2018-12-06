@@ -99,51 +99,21 @@ def get_salt():
     fi.close()
     return salt
 
-#incorporated into add_account so no longer used:
-def add_password_dialog():
-    invalid_resp = True
-    while(invalid_resp):
-        print('Type "add" to add a password')
-        print('Type "rand" to generate and add a random password (more secure)')
-        print('Type cancel exit this dialog')
-        resp = input('> ').lower()
-        if resp == 'add':
-            add_account()
-            invalid_resp = False
-        elif resp == 'rand':
-            add_random_password()
-            invalid_resp = False
-        elif resp == 'cancel':
-            invalid_resp = False
-
-#Maybe want to break this huge ugly function up...
 def add_account():
-    invalid_resp = True
     url = ''
     account_id = ''
     enc_result = ''
+    url = query_url()
+    account_id = query_account_id()
+    query_random_pass() 
+    #enc_pass = enc_result[:-8]
+    #enc_nonce = enc_result[-8:]
+    #write url, account_id, enc_pass, enc_nonce to password file
+
+def query_random_pass():
+    valid_resp = True
     while(invalid_resp):
-        print('What is the URL for the account you are adding?')
-        resp = input('> ')
-        url = resp
-        print('Is ' + url + ' correct? (y/n)')
-        resp = input('> ')
-        if resp == 'y':
-            invalid_resp = False
-    
-    invalid_resp = True
-    while(invalid_resp):
-        print('What is the username for the account you are adding?')
-        resp = input('> ')
-        account_id = resp
-        print('Is ' + account_id + ' correct? (y/n)')
-        resp = input('> ')
-        if resp == 'y':
-            invalid_resp = False
-            
-    invalid_resp = True
-    while(invalid_resp):
-        print('Would you like a password randomly generated for this account? (y/n)')
+        print('Would you like a password randomly generated for this account? [y/N]')
         resp = input('> ').lower()
         if resp == 'y':
             enc_result = enc_random_password()
@@ -151,10 +121,33 @@ def add_account():
         else:
             enc_result = enc_password()
             invalid_resp = False
-    #enc_pass = enc_result[:-8]
-    #enc_nonce = enc_result[-8:]
-    #write url, account_id, enc_pass, enc_nonce to password file
+        # return password later
+    
 
+def query_account_id():
+    valid_resp = True
+    while(invalid_resp):
+        print('What is the username for the account you are adding?')
+        resp = input('> ')
+        account_id = resp
+        print('Is ' + account_id + ' correct? [y/N]')
+        resp = input('> ')
+        if resp == 'y':
+            invalid_resp = False
+        return account_id
+    
+
+def query_url():
+    valid_resp = True
+    while(invalid_resp):
+        print('What is the URL for the account you are adding?')
+        resp = input('> ')
+        url = resp
+        print('Is ' + url + ' correct? [y/N]')
+        resp = input('> ')
+        if resp == 'y':
+            invalid_resp = False
+        return url
 
 def enc_password():
     #derive key from password
@@ -217,7 +210,7 @@ def decrypt_password(enc_stuff):
     cntr = Counter.new(64, prefix=nonce, initial_value=0)
     ctr_cipher = AES.new(key, AES.MODE_CTR, counter=cntr)
     #remove key, nonce from memory
-    password = ctr_cipher.decrypt(enc_passowrd)
+    password = ctr_cipher.decrypt(enc_password)
     #copy password to clipboard
     pyperclip.copy(password)
     # may be unecessary, attempt to purge password from mem
