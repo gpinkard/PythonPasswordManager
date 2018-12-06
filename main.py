@@ -169,13 +169,12 @@ def enc_password():
     counter = Counter.new(4*AES.block_size, prefix = nonce, initial_value = 0)
     cipher = AES.new(key, AES.MODE_CTR, counter=counter)
 
-    encrypted_password = cipher.encrypt(mapped_password)
+    encrypted_password = cipher.encrypt(mapped_password.encode('utf-8'))
     return encrypted_password 
 
 def enc_random_password():
     #if user doesn't supply a password:
     byte_password = Random.get_random_bytes(18)
-    #password = Ari's function to map bytes to ASCII.(byte_password)
     password = getpass.getpass('Enter your master password: ')
     #return enc_pass and enc_nonce
     return
