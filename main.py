@@ -47,6 +47,7 @@ def first_session():
     # derive key, hash
     # return key
 
+
 def begin_session():
     print('Welcome. Please enter your master password.')
     password = getpass.getpass('Master password: ')
@@ -111,43 +112,38 @@ def add_account():
     #write url, account_id, enc_pass, enc_nonce to password file
 
 def query_random_pass():
-    valid_resp = True
-    while(invalid_resp):
+    while(True):
         print('Would you like a password randomly generated for this account? [y/N]')
         resp = input('> ').lower()
         if resp == 'y':
             enc_result = enc_random_password()
-            invalid_resp = False
+            return
         else:
             enc_result = enc_password()
-            invalid_resp = False
+            return
         # return password later
     
 
 def query_account_id():
-    valid_resp = True
-    while(invalid_resp):
+    while(True):
         print('What is the username for the account you are adding?')
         resp = input('> ')
         account_id = resp
         print('Is ' + account_id + ' correct? [y/N]')
         resp = input('> ')
         if resp == 'y':
-            invalid_resp = False
-        return account_id
+            return account_id
     
 
 def query_url():
-    valid_resp = True
-    while(invalid_resp):
+    while(True):
         print('What is the URL for the account you are adding?')
         resp = input('> ')
         url = resp
         print('Is ' + url + ' correct? [y/N]')
         resp = input('> ')
         if resp == 'y':
-            invalid_resp = False
-        return url
+            return url
 
 def enc_password():
     #derive key from password
@@ -184,7 +180,7 @@ def enc_random_password():
 """
 retrieves encryped password and iv as a tuple given a URL name
 """
-def retrieve_encrypted_data(url):
+def retrieve_encrypted_data_url(url):
     fi = open('.__PASS__.', 'r')
     data = fi.read('\n')
     fi.close()
@@ -193,6 +189,35 @@ def retrieve_encrypted_data(url):
             return (data[i+2], data[i+3])
     print('Error: ' + url + ' is not present in the password file')
 
+
+"""
+retrieve encrypted data, but with a username.
+BIG AND UGLY :o
+"""
+def retrieve_encrypted_data_username(username):
+    fi = open('.__PASS__.', 'r')
+    data = fi.read('\n')
+    fi.close()
+    accounts = []
+    for i in range(0, len(data)):
+        if data[i] == username:
+            accounts.append(data[i-1]) # url is before username
+    if len(accouts) != 0:
+        print('There are several accounts associated with the username ' + username)
+        print('Type in the number associated with the account for retreival')
+        for i in range(0, len(accounts)):
+            print(str(i+1) + ': ' + accounts[i])
+        while(True):
+            ind = input('> ')
+            if ind > 0 and < len(accounts + 1):
+                # i+1 and i+2 because we are already ahead by 1
+                # should be enc password and nonce
+                return(data[i+1], data[i+2])
+            else:
+                print(str(ind) + ' is not a valid index for retrieval')
+    else:
+        print('The username ' + username + ' is not associated with any accounts')
+                
 
 def decrypt_password(enc_stuff):
     #if we just want to pass both as one param:
