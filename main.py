@@ -200,26 +200,33 @@ def retrieve_encrypted_data_username(username):
     fi = open('.__PASS__.', 'r')
     data = fi.read('\n')
     fi.close()
-    accounts = []
+    accounts = {}
     for i in range(0, len(data)):
         if data[i] == username:
-            accounts.append(data[i-1]) # url is before username
-    if len(accouts) != 0:
+            # accounts.append(data[i-1]) # url is before username
+            accounts[data[i-1]] = i-1
+    if len(accouts) > 1:
         print('There are several accounts associated with the username ' + username)
         print('Type in the number associated with the account for retreival')
-        for i in range(0, len(accounts)):
-            print(str(i+1) + ': ' + accounts[i])
+        tmp = {}
+        ctr = 1
+        for acc in accounts.items():
+            print(str(ctr) + ': ' + acc)
+            tmp[ctr] = acc
+            ctr += 1
         while(True):
             ind = input('> ')
             if ind > 0 and < len(accounts + 1):
-                # i+1 and i+2 because we are already ahead by 1
-                # should be enc password and nonce
-                return(data[i+1], data[i+2])
+                ind_account = accounts[tmp[ind]]
+                print(data[ind_account+2], data[ind_account+3])
+                return (data[ind_account+2], data[ind_account+3])
             else:
                 print(str(ind) + ' is not a valid index for retrieval')
+    elif len(accounts) == 1:
+        ind = list(accounts.values())[0]
+        return (data[ind+2], data[ind+3])
     else:
         print('The username ' + username + ' is not associated with any accounts')
-                
 
 def decrypt_password(enc_stuff):
     #if we just want to pass both as one param:
