@@ -100,6 +100,18 @@ def add_random_password():
     #if user doesn't supply a password
     return
 
+<<<<<<< Updated upstream
+=======
+<<<<<<< HEAD
+def retrieve_password():
+    #parse password file to find password, iv
+    #to_return = enc_password + enc_iv
+    #account = ask for account or URL
+    #enc_stuff = get_enc_stuff(account)
+    #decrypt_password(enc_stuff), which copies password to clipboard
+    return
+=======
+>>>>>>> Stashed changes
 """
 retrieves encryped password and iv as a tuple given a URL name
 """
@@ -111,6 +123,16 @@ def retrieve_encrypted_data(url):
         if data[i] == url:
             return (data[i+2], data[i+3])
     print('Error: ' + url + ' is not present in the password file')
+<<<<<<< Updated upstream
+=======
+>>>>>>> gpinkard
+
+def get_enc_stuff(account):
+    #enc_password = parse file to get password
+    #enc_iv = next line
+    #enc_stuff = enc_password + enc_iv
+    return 
+>>>>>>> Stashed changes
 
 def decrypt_password(enc_stuff):
     #if we just want to pass both as one param:
