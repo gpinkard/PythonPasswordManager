@@ -116,7 +116,9 @@ def add_password():
 
 
 def add_random_password():
-    #if user doesn't supply a password
+    #if user doesn't supply a password:
+    byte_password = Random.get_random_bytes(18)
+    #password = Ari's function to map bytes to ASCII.(byte_password)
     return
 
 
@@ -143,7 +145,7 @@ def decrypt_password(enc_stuff):
     #remove password from memory
     ecb_cipher = AES.new(key, AES.MODE_ECB)
     iv = ecb_cipher.decrypt(enc_iv)
-    cbc_cipher = AES.new(key, AES.MODE_CBC, iv)
+    cbc_cipher = AES.new(key, AES.MODE_CTR, iv)
     #remove key, iv from memory
     padded_password = cbc_cipher.decrypt(enc_passowrd)
     password = unpad(padded_password, AES.block_size)
