@@ -178,8 +178,6 @@ def enc_password():
 
     encrypted_password = cipher.encrypt(mapped_password)
     return encrypted_password 
-    #return enc_pass and enc_nonce
-    return
 
 def enc_random_password():
     #if user doesn't supply a password:

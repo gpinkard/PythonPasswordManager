@@ -108,7 +108,7 @@ def remap_password(mapped_password):
 
 
 # Only for testing purposes
-
+"""
 for i in range(1000):
     password = ''
     for j in range(10):
@@ -135,4 +135,4 @@ for i in range(1000):
         print(password)
         print(mapped_password)
         print(remapped_password)
-
+"""
