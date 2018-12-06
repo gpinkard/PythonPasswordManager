@@ -12,6 +12,7 @@ iv
 import os.path
 import getpass
 import sys
+import pyperclip
 from Crypto.Random import get_random_bytes
 
 from Crypto.Cipher import AES
@@ -128,6 +129,9 @@ def decrypt_password(enc_stuff):
     padded_password = cbc_cipher.decrypt(enc_passowrd)
     password = unpad(padded_password, AES.block_size)
     #copy password to clipboard(??)
+    pyperclip.copy(password)
+    # may be unecessary, attempt to purge password from mem
+    password = ''
     return
 
 """
