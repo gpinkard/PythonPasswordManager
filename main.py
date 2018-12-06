@@ -44,7 +44,6 @@ def first_session():
             print('Passwords do not match.\n')
             password = ''
     # derive key, hash
-    # write key hash to file (maybe ??)
     # return key
 
 def begin_session():
@@ -54,7 +53,6 @@ def begin_session():
     if password != confirm_password:
         print('Passwords do not match.\n')
         quit()
-    # authenticate password (maybe ??)
     # derive key, return key
 
 def get_cmd():
