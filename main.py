@@ -96,8 +96,8 @@ def get_salt():
 def add_password_dialog():
     invalid_resp = True
     while(invalid_resp):
-        print('Type add add a password')
-        print('Type rand generate and add a random password (more secure)')
+        print('Type "add" to add a password')
+        print('Type "rand" to generate and add a random password (more secure)')
         print('Type cancel exit this dialog')
         resp = input('> ').toLower()
         if resp == 'add':
@@ -162,7 +162,7 @@ def delete_password_dialog():
     if exists != -1:
         print('Are you sure you want to delete ' + domain + '[y/N]')
         resp = input('> ').toLower()
-        if resp = 'y':
+        if resp == 'y':
             delete_password()
     else:
         print(domain + ' was not found in the password file')
@@ -194,7 +194,7 @@ def delete_password(domain):
     # erase contents of password file
     """
     ind = find_domain_ind(domain)
-    new_data = data[0:ind] + [ind+4:]
+    new_data = data[0:ind] + data[ind+4:]
     open('.__PASS__.', 'w').close()
     fi = file.open('.__PASS__.', 'w')
     fi.write(new_data)
