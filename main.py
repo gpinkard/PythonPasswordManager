@@ -57,6 +57,7 @@ def begin_session():
 
 def get_cmd():
     print('Select an operation (add / delete / help / quit / retrieve)')
+    print(AES.block_size)
     cmd = input('> ').lower()
     if cmd == 'add':
         add_account()
@@ -110,7 +111,7 @@ def add_password_dialog():
         elif resp == 'cancel':
             invalid_resp = False
 
-
+#Maybe want to break this huge ugly function up...
 def add_account():
     invalid_resp = True
     url = ''
@@ -145,24 +146,23 @@ def add_account():
         else:
             enc_result = enc_password()
             invalid_resp = False
-    #enc_pass = enc_result[:-(size of nonce)]
-    #enc_nonce = enc_result[-(size of nonce):]
+    #enc_pass = enc_result[:-8]
+    #enc_nonce = enc_result[-8:]
     #write url, account_id, enc_pass, enc_nonce to password file
 
 
 def enc_password():
-    print('In add_password')
-    #password = get from user
     #derive key from password
+    password = getpass.getpass('Enter your master password: ')
     #return enc_pass and enc_nonce
     return
 
 
 def enc_random_password():
-    print('In add_random_password')
     #if user doesn't supply a password:
     byte_password = Random.get_random_bytes(18)
     #password = Ari's function to map bytes to ASCII.(byte_password)
+    password = getpass.getpass('Enter your master password: ')
     #return enc_pass and enc_nonce
     return
 
@@ -182,18 +182,19 @@ def retrieve_encrypted_data(url):
 
 def decrypt_password(enc_stuff):
     #if we just want to pass both as one param:
-    enc_password = enc_stuff[:-32]
-    enc_iv = enc_stuff[-32:]
+    enc_password = enc_stuff[:-8]
+    enc_nonce = enc_stuff[-8:]
     salt = get_salt()
-    password = getpass.getpass('Master password: ')
+    password = getpass.getpass('Enter your master password: ')
     key = PBKDF2(password, salt, 32, count=5000)
     #remove password from memory
     ecb_cipher = AES.new(key, AES.MODE_ECB)
-    iv = ecb_cipher.decrypt(enc_iv)
-    cbc_cipher = AES.new(key, AES.MODE_CTR, iv)
-    #remove key, iv from memory
-    padded_password = cbc_cipher.decrypt(enc_passowrd)
-    password = unpad(padded_password, AES.block_size)
+    nonce = ecb_cipher.decrypt(enc_nonce)
+    # intialize a counter with the nonce as prefix and initial counter value 0
+    cntr = Counter.new(64, prefix=nonce, initial_value=0)
+    ctr_cipher = AES.new(key, AES.MODE_CTR, counter=cntr)
+    #remove key, nonce from memory
+    password = ctr_cipher.decrypt(enc_passowrd)
     #copy password to clipboard
     pyperclip.copy(password)
     # may be unecessary, attempt to purge password from mem
