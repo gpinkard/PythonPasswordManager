@@ -1,4 +1,4 @@
-"
+"""
 Things to do:
 1. check if there is a meta file (of the form '#META#')
 """
@@ -9,6 +9,8 @@ from Crypto import Random
 
 from Crypto.Cipher import AES
 from Crypto.Util import Padding
+from Crypto.Util import Counter
+from mapping import *
 
 def main():
     print('\n=== Python Password Manager ===\n')
@@ -73,21 +75,55 @@ def write_key_hash(keyHash):
     pass
 
 def write_salt():
-    fi = file.open('.__META__.')
+    fi = open('.__META__.')
     salt = Random.get_random_bytes(AES.block_size)
-    fi = file.open('.__META__.', 'w')
+    fi = open('.__META__.', 'w')
     fi.write(salt)
 
 def get_salt():
-    fi = file.open('.__META__.', 'rb')
+    fi = open('.__META__.', 'rb')
     salt = fi.readline()
     fi.close()
     return salt
 
-def write_encrypted_password(encrypted_password):
+def write_encrypted_password(encrypted_password, username, url, nonce):
     return
 
 def add_password():
+    password = getpass.getpass('Master password: ')
+    confirm_password = getpass.getpass('Confirm password: ')
+    if password != confirm_password:
+        print('Passwords do not match.\n')
+        quit()
+#    salt = get_salt()
+    salt = Random.get_random_bytes(16)
+    key = PBKDF2(password, salt, 32, count = 5000)
+    password = ''
+    confirm_password = ''
+    
+    done = False
+
+    while not done:
+        username = input("Enter the url where this password will be used: ")
+        url = input("Enter the user name associated with this password: ") 
+        password = getpass.getpass("Enter the account password: ")
+
+        mapped_password = map_password(password)
+        
+        nonce = Random.get_random_bytes(AES.block_size/2)
+        counter = Counter.new(4*AES.block_size, prefix = nonce, initial_value = 0)
+        cipher = AES.new(key, AES.MODE_CTR, counter=counter)
+
+        encrypted_password = cipher.encrypt(mapped_password)
+        write_encrypted_password(encrypted_password, username, url, nonce)
+        
+        choice = input("Add another password? (Y/N) ")
+        if choice.lower() != "y":
+            done = True
+        
+    return
+
+def add_random_password():
     password = getpass.getpass('Master password: ')
     confirm_password = getpass.getpass('Confirm password: ')
     if password != confirm_password:
@@ -98,11 +134,27 @@ def add_password():
     password = ''
     confirm_password = ''
 
+    done = False
 
-    return
+    while not done:
+        username = input("Enter the url where this password will be used: ")
+        url = input("Enter the user name associated with this password: ") 
+        # randomly generate password
+        password = 'placeholder'
 
-def add_random_password():
-    #if user doesn't supply a password
+        mapped_password = map_password(password)
+        
+        nonce = Random.get_random_bytes(AES.block_size/2)
+        counter = Counter.new(4*AES.block_size, prefix = nonce, initial_value = 0)
+        cipher = AES.new(key, AES.MODE_CTR, counter=counter)
+
+        encrypted_password = cipher.encrypt(mapped_password)
+        write_encrypted_password(encrypted_password, username, url, nonce)
+        
+        choice = input("Add another password? (Y/N) ")
+        if choice.lower() != "y":
+            done = True
+
     return
 
 def retrieve_enc_stuff(account):
