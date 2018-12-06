@@ -84,13 +84,21 @@ def get_salt():
     fi.close()
     return salt
 
+def write_encrypted_password(encrypted_password):
+    return
+
 def add_password():
     password = getpass.getpass('Master password: ')
     confirm_password = getpass.getpass('Confirm password: ')
     if password != confirm_password:
         print('Passwords do not match.\n')
         quit()
-    #derive key from password
+    salt = get_salt()
+    key = PBKDF2(password, salt, 32, count = 5000)
+    password = ''
+    confirm_password = ''
+
+
     return
 
 def add_random_password():
