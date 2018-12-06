@@ -15,10 +15,11 @@ iv
 import os.path
 import getpass
 import sys
+import pyperclip
 from Crypto.Random import get_random_bytes
-
 from Crypto.Cipher import AES
 from Crypto.Util import Padding
+
 
 def main():
     print('\n=== Python Password Manager ===\n')
@@ -29,6 +30,7 @@ def main():
         key = begin_session()
     while(True):
         get_cmd()
+
 
 def first_session():
     print('Welcome. Please enter a secure master password.\nThis password must be at least 10 characters in length.')
@@ -55,17 +57,19 @@ def begin_session():
         quit()
     # derive key, return key
 
+
 def get_cmd():
-    cmd = input('Select an operation (add / delete / help / quit / retrieve): ').lower()
+    print('Select an operation (add / delete / help / quit / retrieve)')
+    cmd = input('> ').lower()
     if cmd == 'add':
-        add_password()
+        add_password_dialog()
     elif cmd == 'delete':
         delete_password()
     elif cmd == 'help':
         print_help()
     elif cmd == 'quit':
         print('Goodbye.')
-        sys.exit(0)
+        quit()
     elif cmd == 'retrieve':
         retrieve_password()
     else:
@@ -78,8 +82,6 @@ def is_first_session():
         return False
     return True
 
-def write_key_hash(keyHash):
-    pass
 
 def write_salt():
     fi = file.open('.__META__.')
@@ -87,19 +89,39 @@ def write_salt():
     fi = file.open('.__META__.', 'w')
     fi.write(salt)
 
+
 def get_salt():
     fi = file.open('.__META__.', 'rb')
     salt = fi.readline()
     fi.close()
     return salt
 
+def add_password_dialog():
+    invalid_resp = True
+    while(invalid_resp):
+        print('Type add add a password')
+        print('Type rand generate and add a random password (more secure)')
+        print('Type cancel exit this dialog')
+        resp = input('> ').toLower()
+        if resp == 'add':
+            add_password()
+            invalid_resp = False
+        elif resp == 'rand':
+            add_random_password()
+            invalid_resp = False
+        elif resp == 'cancel':
+            invalid_resp = False
+
+
 def add_password():
     #derive key from password
     return
 
+
 def add_random_password():
     #if user doesn't supply a password
     return
+
 
 """
 retrieves encryped password and iv as a tuple given a URL name
@@ -112,6 +134,7 @@ def retrieve_encrypted_data(url):
         if data[i] == url:
             return (data[i+2], data[i+3])
     print('Error: ' + url + ' is not present in the password file')
+
 
 def decrypt_password(enc_stuff):
     #if we just want to pass both as one param:
@@ -128,21 +151,51 @@ def decrypt_password(enc_stuff):
     padded_password = cbc_cipher.decrypt(enc_passowrd)
     password = unpad(padded_password, AES.block_size)
     #copy password to clipboard(??)
+    pyperclip.copy(password)
+    # may be unecessary, attempt to purge password from mem
+    password = ''
     return
+
+def delete_password_dialog():
+    print('Type the domain of the password you wish to delete')
+    domain = input('> ')
+    exists = find_domain_ind(domain)
+    if exists != -1:
+        print('Are you sure you want to delete ' + domain + '[y/N]')
+        resp = input('> ').toLower()
+        if resp = 'y':
+            delete_password()
+    else:
+        print(domain + ' was not found in the password file')
+
+
+def find_domain_ind(domain):
+    fi = file.open('.__PASS__.', 'r')
+    data = fi.read()
+    fi.close()
+    for i in range(0, len(data)):
+        if i % 4 == 0 and old_data[i] == account_url:
+            return i
+    return -1
+
 
 """
 deletes the specified password (account_url) from the password file
 """
-def delete_password(account_url):
+def delete_password(domain):
     fi = file.open('.__PASS__.', 'r')
     old_data = fi.read('\n')
     fi.close()
     new_data = ''
-    for i in range(0, len(data)):
+    """
+    for i in range(0, len()):
         if i % 4 == 0 and old_data[i] == account_url:
             i += 3
         new_data = new_data + old_data[i]
     # erase contents of password file
+    """
+    ind = find_domain_ind(domain)
+    new_data = data[0:ind] + [ind+4:]
     open('.__PASS__.', 'w').close()
     fi = file.open('.__PASS__.', 'w')
     fi.write(new_data)
@@ -156,6 +209,7 @@ def print_help():
     print('help - print this help')
     print('quit - exit this program')
     print('retrieve [domain] - retrieve password associated with domain\n')
+
 
 if __name__ == '__main__':
     main()
