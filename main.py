@@ -59,7 +59,7 @@ def get_cmd():
     print('Select an operation (add / delete / help / quit / retrieve)')
     cmd = input('> ').lower()
     if cmd == 'add':
-        add_password_dialog()
+        add_account()
     elif cmd == 'delete':
         delete_password()
     elif cmd == 'help':
@@ -93,15 +93,16 @@ def get_salt():
     fi.close()
     return salt
 
+#incorporated into add_account so no longer used:
 def add_password_dialog():
     invalid_resp = True
     while(invalid_resp):
         print('Type "add" to add a password')
         print('Type "rand" to generate and add a random password (more secure)')
         print('Type cancel exit this dialog')
-        resp = input('> ').toLower()
+        resp = input('> ').lower()
         if resp == 'add':
-            add_password()
+            add_account()
             invalid_resp = False
         elif resp == 'rand':
             add_random_password()
@@ -110,15 +111,59 @@ def add_password_dialog():
             invalid_resp = False
 
 
-def add_password():
+def add_account():
+    invalid_resp = True
+    url = ''
+    account_id = ''
+    enc_result = ''
+    while(invalid_resp):
+        print('What is the URL for the account you are adding?')
+        resp = input('> ')
+        url = resp
+        print('Is ' + url + ' correct? (y/n)')
+        resp = input('> ')
+        if resp == 'y':
+            invalid_resp = False
+    
+    invalid_resp = True
+    while(invalid_resp):
+        print('What is the username for the account you are adding?')
+        resp = input('> ')
+        account_id = resp
+        print('Is ' + account_id + ' correct? (y/n)')
+        resp = input('> ')
+        if resp == 'y':
+            invalid_resp = False
+            
+    invalid_resp = True
+    while(invalid_resp):
+        print('Would you like a password randomly generated for this account? (y/n)')
+        resp = input('> ').lower()
+        if resp == 'y':
+            enc_result = enc_random_password()
+            invalid_resp = False
+        else:
+            enc_result = enc_password()
+            invalid_resp = False
+    #enc_pass = enc_result[:-(size of nonce)]
+    #enc_nonce = enc_result[-(size of nonce):]
+    #write url, account_id, enc_pass, enc_nonce to password file
+
+
+def enc_password():
+    print('In add_password')
+    #password = get from user
     #derive key from password
+    #return enc_pass and enc_nonce
     return
 
 
-def add_random_password():
+def enc_random_password():
+    print('In add_random_password')
     #if user doesn't supply a password:
     byte_password = Random.get_random_bytes(18)
     #password = Ari's function to map bytes to ASCII.(byte_password)
+    #return enc_pass and enc_nonce
     return
 
 
@@ -149,7 +194,7 @@ def decrypt_password(enc_stuff):
     #remove key, iv from memory
     padded_password = cbc_cipher.decrypt(enc_passowrd)
     password = unpad(padded_password, AES.block_size)
-    #copy password to clipboard(??)
+    #copy password to clipboard
     pyperclip.copy(password)
     # may be unecessary, attempt to purge password from mem
     password = ''
