@@ -1,3 +1,6 @@
+__author__ = "Ari Conati, Gabriel Pinkard, Lindsay Coffee-Johnson"
+__licence__ = "MIT"
+
 import os.path
 import getpass
 import sys
@@ -5,6 +8,7 @@ from Crypto.Random import get_random_bytes
 
 from Crypto.Cipher import AES
 from Crypto.Util import Padding
+
 def main():
     print('\n=== Python Password Manager ===\n')
     key = ''
@@ -120,18 +124,22 @@ def decrypt_password(enc_stuff):
     #copy password to clipboard(??)
     return
 
+"""
+deletes the specified password (account_url) from the password file
+"""
 def delete_password(account_url):
-    fi = file.open('.__PASS__.')
-    data = fi.read('\n')
+    fi = file.open('.__PASS__.', 'r')
+    old_data = fi.read('\n')
     fi.close()
-    tmp = ''
+    new_data = ''
     for i in range(0, len(data)):
-        if i % 4 == 0:
-           if data[i] == account_url:
-               i+=3
-        tmp = tmp + data[i]
-    fi.open('.__PASS__.')
-    fi.write(tmp)
+        if i % 4 == 0 and old_data[i] == account_url:
+            i += 3
+        new_data = new_data + old_data[i]
+    # erase contents of password file
+    open('.__PASS__.', 'w').close()
+    fi = file.open('.__PASS__.', 'w')
+    fi.write(new_data)
     fi.close()
 
 
