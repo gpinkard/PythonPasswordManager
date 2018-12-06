@@ -59,7 +59,8 @@ def begin_session():
 
 
 def get_cmd():
-    cmd = input('Select an operation (add / delete / help / quit / retrieve): ').lower()
+    print('Select an operation (add / delete / help / quit / retrieve)')
+    cmd = input('> ').lower()
     if cmd == 'add':
         add_password_dialog()
     elif cmd == 'delete':
@@ -101,7 +102,7 @@ def add_password_dialog():
         print('Type add add a password')
         print('Type rand generate and add a random password (more secure)')
         print('Type cancel exit this dialog')
-        resp = input('').toLower()
+        resp = input('> ').toLower()
         if resp == 'add':
             add_password()
             invalid_resp = False
@@ -155,20 +156,46 @@ def decrypt_password(enc_stuff):
     password = ''
     return
 
+def delete_password_dialog():
+    print('Type the domain of the password you wish to delete')
+    domain = input('> ')
+    exists = find_domain_ind(domain)
+    if exists != -1:
+        print('Are you sure you want to delete ' + domain + '[y/N]')
+        resp = input('> ').toLower()
+        if resp = 'y':
+            delete_password()
+    else:
+        print(domain + ' was not found in the password file')
+
+
+def find_domain_ind(domain):
+    fi = file.open('.__PASS__.', 'r')
+    data = fi.read()
+    fi.close()
+    for i in range(0, len(data)):
+        if i % 4 == 0 and old_data[i] == account_url:
+            return i
+    return -1
+
 
 """
 deletes the specified password (account_url) from the password file
 """
-def delete_password(account_url):
+def delete_password(domain):
     fi = file.open('.__PASS__.', 'r')
     old_data = fi.read('\n')
     fi.close()
     new_data = ''
-    for i in range(0, len(data)):
+    """
+    for i in range(0, len()):
         if i % 4 == 0 and old_data[i] == account_url:
             i += 3
         new_data = new_data + old_data[i]
     # erase contents of password file
+    """
+    ind = find_domain_ind(domain)
+    new_data = data[0:ind] + [ind+4:]
     open('.__PASS__.', 'w').close()
     fi = file.open('.__PASS__.', 'w')
     fi.write(new_data)
