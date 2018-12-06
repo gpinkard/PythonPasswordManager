@@ -16,6 +16,8 @@ import pyperclip
 from Crypto.Random import get_random_bytes
 from Crypto.Cipher import AES
 from Crypto.Util import Padding
+from Crypto.Util import Counter
+from mapping import *
 
 
 def main():
@@ -70,6 +72,9 @@ def get_cmd():
         quit()
     elif cmd == 'retrieve':
         retrieve_password()
+        quit()
+    elif cmd == 'retrieve':
+        retrievePassword()
     else:
         print(cmd + ' is not a recognized command. Try \'help\'.')
 
@@ -82,14 +87,14 @@ def is_first_session():
 
 
 def write_salt():
-    fi = file.open('.__META__.')
+    fi = open('.__META__.')
     salt = Random.get_random_bytes(AES.block_size)
-    fi = file.open('.__META__.', 'w')
+    fi = open('.__META__.', 'w')
     fi.write(salt)
 
 
 def get_salt():
-    fi = file.open('.__META__.', 'rb')
+    fi = open('.__META__.', 'rb')
     salt = fi.readline()
     fi.close()
     return salt
@@ -153,10 +158,28 @@ def add_account():
 
 def enc_password():
     #derive key from password
-    password = getpass.getpass('Enter your master password: ')
+    password = getpass.getpass('Master password: ')
+    confirm_password = getpass.getpass('Confirm password: ')
+    if password != confirm_password:
+        print('Passwords do not match.\n')
+        quit()
+#    salt = get_salt()
+    salt = Random.get_random_bytes(16)
+    key = PBKDF2(password, salt, 32, count = 5000)
+    password = ''
+    confirm_password = ''
+
+    password = getpass.getpass("Enter the account password: ")
+    mapped_password = map_password(password)
+    
+    nonce = Random.get_random_bytes(AES.block_size/2)
+    counter = Counter.new(4*AES.block_size, prefix = nonce, initial_value = 0)
+    cipher = AES.new(key, AES.MODE_CTR, counter=counter)
+
+    encrypted_password = cipher.encrypt(mapped_password)
+    return encrypted_password 
     #return enc_pass and enc_nonce
     return
-
 
 def enc_random_password():
     #if user doesn't supply a password:
