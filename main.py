@@ -1,10 +1,7 @@
-"""
-Things to do:
-1. check if there is a meta file (of the form '#META#')
-=======
 __author__ = "Ari Conati, Gabriel Pinkard, and Lindsay Coffee-Johnson"
 __licence__ = "MIT"
 
+"""
 ENCRYPTED PASSWORD ENTRY FORMAT:
 URL
 username/id
