@@ -303,7 +303,13 @@ def retrieve_encrypted_data_username(username):
             tmp[ctr] = acc[1]
             ctr += 1
         while(True):
-            ind = int(input('> '))
+            ind = input('> ')
+            try:
+                ind = int(ind)
+            except Exception:
+                print('input must be a valid number')
+                continue
+            print(ind)
             if ind > 0 and ind < len(accounts) + 1:
                 ind_account = tmp[ind]
                 return (data[ind_account+2], data[ind_account+3])
