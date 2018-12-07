@@ -65,7 +65,6 @@ def begin_session():
 
 def get_cmd():
     print('Select an operation (add / delete / help / quit / retrieve)')
-    print(AES.block_size)
     cmd = input('> ').lower()
     if cmd == 'add':
         add_account()
@@ -92,7 +91,7 @@ def is_first_session():
 def write_salt():
     salt = Random.get_random_bytes(8)
     fi = open('.__META__.', 'w')
-    fi.write(salt)
+    fi.write(str(salt))
     fi.close()
 
 
@@ -238,10 +237,11 @@ BIG AND UGLY :o
 """
 def retrieve_encrypted_data_username(username):
     fi = open('.__PASS__.', 'r')
-    data = fi.readline()
+    data = fi.readlines()
     fi.close()
     accounts = {}
     for i in range(0, len(data)):
+        data[i] = data[i].strip()
         if data[i] == username:
             # accounts.append(data[i-1]) # url is before username
             accounts[data[i-1]] = i-1
