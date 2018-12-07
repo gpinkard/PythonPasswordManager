@@ -12,7 +12,7 @@ nonce
 import os.path
 import getpass
 import sys
-#import pyperclip
+import pyperclip
 from Crypto.Random import get_random_bytes
 from Crypto import Random
 from Crypto.Cipher import AES
@@ -26,6 +26,7 @@ from mapping import *
 def main():
     print('\n=== Python Password Manager ===\n')
     key = ''
+    write_salt()
     if is_first_session():
         first_session()
     while(True):
@@ -87,9 +88,9 @@ def get_salt():
 
 
 def add_account():
-    url = 'URL: ' + query_url() + '\n'
+    url = 'URL:' + query_url() + '\n'
     url = url.encode('utf-8')
-    account_id = 'USER NAME: ' + query_account_id() + '\n'
+    account_id = 'USERNAME:' + query_account_id() + '\n'
     account_id = account_id.encode('utf-8')
     enc_result = query_random_pass() 
     enc_pass = enc_result[0]
@@ -272,16 +273,17 @@ def decrypt_password(enc_stuff):
     key = PBKDF2(password, salt, 32, count=5000)
     #remove password from memory
     ecb_cipher = AES.new(key, AES.MODE_ECB)
-    nonce = ecb_cipher.decrypt(enc_nonce)
+    nonce = ecb_cipher.decrypt(enc_nonce)[0:int(AES.block_size/2)]
     # intialize a counter with the nonce as prefix and initial counter value 0
     cntr = Counter.new(64, prefix=nonce, initial_value=0)
     ctr_cipher = AES.new(key, AES.MODE_CTR, counter=cntr)
+    key = ''
+    nonce = ''
     #remove key, nonce from memory
     password = ctr_cipher.decrypt(enc_password).decode('utf-8')
     password = remap_password(password)
     #copy password to clipboard
     pyperclip.copy(password)
-    # may be unecessary, attempt to purge password from mem
     password = ''
     return
 
@@ -308,7 +310,6 @@ def find_domain_ind(domain):
             return i
     return -1
     """
-    for 
 
 
 """
