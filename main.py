@@ -12,11 +12,11 @@ nonce
 import os.path
 import getpass
 import sys
-#import pyperclip
+import pyperclip
 from Crypto.Random import get_random_bytes
 from Crypto import Random
 from Crypto.Cipher import AES
-from Crypto.Protocol.KDF import *
+from Crypto.Protocol.KDF import PBKDF2
 from Crypto.Util import Padding
 from Crypto.Util import Counter
 
@@ -92,10 +92,10 @@ def is_first_session():
 
 
 def write_salt():
-    fi = open('.__META__.')
     salt = Random.get_random_bytes(8)
     fi = open('.__META__.', 'w')
     fi.write(salt)
+    fi.close()
 
 
 def get_salt():
@@ -179,7 +179,6 @@ def enc_random_password():
     #if user doesn't supply a password:
     
     password = getpass.getpass('Enter your master password: ')
-    password = getpass.getpass('Master password: ')
     confirm_password = getpass.getpass('Confirm password: ')
     salt = get_salt()
     key = PBKDF2(password, salt, 32, count = 5000)
