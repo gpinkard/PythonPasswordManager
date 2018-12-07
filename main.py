@@ -26,6 +26,7 @@ from mapping import *
 def main():
     print('\n=== Python Password Manager ===\n')
     key = ''
+    write_salt()
     if is_first_session():
         first_session()
     while(True):
@@ -46,15 +47,6 @@ def first_session():
             print('Passwords do not match.\n')
             password = ''
     write_salt()
-
-def begin_session():
-    print('Welcome. Please enter your master password.')
-    password = getpass.getpass('Master password: ')
-    confirm_password = getpass.getpass('Confirm password: ')
-    if password != confirm_password:
-        print('Passwords do not match.\n')
-        quit()
-        # derive key, return key
 
 
 def get_cmd():
@@ -82,6 +74,9 @@ def is_first_session():
 
 
 def write_salt():
+    p_fi = open('.__PASS__.', 'w')
+    p_fi.close()
+
     salt = Random.get_random_bytes(8)
     fi = open('.__META__.', 'wb')
     fi.write(salt)
@@ -96,19 +91,23 @@ def get_salt():
 
 
 def add_account():
-    url = query_url() + '\n'
-    account_id = query_account_id() + '\n'
+    url = 'URL:' + query_url() + '\n'
+    url = url.encode('utf-8')
+    account_id = 'USERNAME:' + query_account_id() + '\n'
+    account_id = account_id.encode('utf-8')
     enc_result = query_random_pass() 
-    enc_pass = enc_result[0] + '\n'
-    enc_nonce = enc_result[1] + '\n'
+    enc_pass = enc_result[0]
+    enc_nonce = enc_result[1]
     
-    pass_file = open('.__PASS__.', 'r')
+    pass_file = open('.__PASS__.', 'rb')
     fi_contents = pass_file.read()
     pass_file.close()
 
-    fi_contents += '\n' + url + account_id + enc_pass + enc_nonce
+    encoded_new_line = '\n'.encode('utf-8')
 
-    pass_file = open('.__PASS__.', 'w')
+    fi_contents +=  encoded_new_line + url + account_id + enc_pass + encoded_new_line + enc_nonce + encoded_new_line
+
+    pass_file = open('.__PASS__.', 'wb')
     pass_file.write(fi_contents)
     pass_file.close()
     
@@ -121,12 +120,11 @@ def query_random_pass():
             enc_result = enc_random_password()
             break
         elif resp == 'n':
-            enc_result = enc_password
+            enc_result = enc_password()
             break
         else:
             print('an explicit y or n is required')
-    return enc_password
-      
+    return enc_result
   
 def query_account_id():
     while(True):
@@ -296,16 +294,17 @@ def decrypt_password(enc_stuff):
     key = PBKDF2(password, salt, 32, count=5000)
     #remove password from memory
     ecb_cipher = AES.new(key, AES.MODE_ECB)
-    nonce = ecb_cipher.decrypt(enc_nonce)
+    nonce = ecb_cipher.decrypt(enc_nonce)[0:int(AES.block_size/2)]
     # intialize a counter with the nonce as prefix and initial counter value 0
     cntr = Counter.new(64, prefix=nonce, initial_value=0)
     ctr_cipher = AES.new(key, AES.MODE_CTR, counter=cntr)
+    key = ''
+    nonce = ''
     #remove key, nonce from memory
     password = ctr_cipher.decrypt(enc_password).decode('utf-8')
     password = remap_password(password)
     #copy password to clipboard
     pyperclip.copy(password)
-    # may be unecessary, attempt to purge password from mem
     password = ''
     return
 
@@ -321,7 +320,7 @@ def delete_password_dialog():
     else:
         print(domain + ' was not found in the password file')
 
-
+        
 """
 deletes the specified password (account_url) from the password file
 """
