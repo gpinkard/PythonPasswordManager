@@ -12,7 +12,7 @@ nonce
 import os.path
 import getpass
 import sys
-import pyperclip
+#import pyperclip
 from Crypto.Random import get_random_bytes
 from Crypto import Random
 from Crypto.Cipher import AES
@@ -238,7 +238,7 @@ def retrieve_encrypted_data_url(url):
     data = fi.readlines()
     fi.close()
     for i in range(0, len(data), 5):
-        if data[i].decode('utf-8') == 'URL:' + url:
+        if data[i].decode('utf-8').strip('\n') == 'URL:' + url:
             # return (data[i+2], data[i+3])
             pwd = clean_return_val(data[i+2])
             nonce = clean_return_val(data[i+3])
@@ -317,7 +317,8 @@ def decrypt_password(enc_stuff):
     password = ctr_cipher.decrypt(enc_password).decode('utf-8')
     password = remap_password(password)
     #copy password to clipboard
-    pyperclip.copy(password)
+   # pyperclip.copy(password)
+    print(password)
     password = ''
     return
 
