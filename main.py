@@ -152,20 +152,24 @@ def query_url():
 
 
 def enc_password():
-    #derive key from password
-    password = getpass.getpass('Master password: ')
-    confirm_password = getpass.getpass('Confirm password: ')
-    if password != confirm_password:
-        print('Passwords do not match.\n')
-        quit()
-    salt = get_salt()
-    key = PBKDF2(password, salt, 32, count = 100000)
-    password = ''
-    confirm_password = ''
-
     password = getpass.getpass("Enter the account password: ")
-    mapped_password = map_password(password)
     
+    master_pass = 'password' 
+    confirm_password = 'confirm'
+    while master_pass != confirm_password:
+        master_pass = getpass.getpass('Enter master password: ')
+        confirm_password = getpass.getpass('Confirm password: ')
+        if master_pass != confirm_password:
+            print('Passwords do not match.\n')
+        else:
+            break
+    
+    salt = get_salt()
+    key = PBKDF2(master_pass, salt, 32, count = 100000)
+    master_pass = ''
+    confirm_password = ''
+    
+    mapped_password = map_password(password)
     nonce = Random.get_random_bytes(int(AES.block_size/2))
     padded_nonce = nonce
     for x in range(int(AES.block_size/2)):
@@ -181,16 +185,23 @@ def enc_password():
     return (encrypted_password, encrypted_nonce)
 
 def enc_random_password():
-    #if user doesn't supply a password:
-    
-    password = getpass.getpass('Enter your master password: ')
-    confirm_password = getpass.getpass('Confirm password: ')
+    master_pass = 'password' 
+    confirm_password = 'confirm'
+    while master_pass != confirm_password:
+        master_pass = getpass.getpass('Enter master password: ')
+        confirm_password = getpass.getpass('Confirm password: ')
+        if master_pass != confirm_password:
+            print('Passwords do not match.\n')
+        else:
+            break
+
     salt = get_salt()
-    key = PBKDF2(password, salt, 32, count = 100000)
-    password = ''
+    key = PBKDF2(master_pass, salt, 32, count = 100000)
+    master_pass = ''
     confirm_password = ''
     
     password_length = 16
+    password = ''
 
     for x in range(password_length):
         random_ascii_value = random.randint(33,126)
@@ -302,29 +313,22 @@ def retrieve_encrypted_data_username(username):
         print('The username ' + username + ' is not associated with any accounts')
 
 def decrypt_password(enc_stuff):
-    #if we just want to pass both as one param:
     enc_password = enc_stuff[0]
     enc_nonce = enc_stuff[1]
     enc_password = enc_password[:-1]
     enc_nonce = enc_nonce[:-1]
-    print(enc_nonce)
     salt = get_salt()
     password = getpass.getpass('Enter your master password: ')
     key = PBKDF2(password, salt, 32, count=100000)
-    #remove password from memory
     ecb_cipher = AES.new(key, AES.MODE_ECB)
     nonce = ecb_cipher.decrypt(enc_nonce)[0:int(AES.block_size/2)]
-    # intialize a counter with the nonce as prefix and initial counter value 0
     cntr = Counter.new(64, prefix=nonce, initial_value=0)
     ctr_cipher = AES.new(key, AES.MODE_CTR, counter=cntr)
     key = ''
     nonce = ''
-    #remove key, nonce from memory
     password = ctr_cipher.decrypt(enc_password).decode('utf-8')
     password = remap_password(password)
-    #copy password to clipboard
     pyperclip.copy(password)
-    print(password)
     password = ''
     return
 
