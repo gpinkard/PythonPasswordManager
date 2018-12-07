@@ -238,10 +238,11 @@ def retrieve_encrypted_data_url(url):
     data = fi.readlines()
     fi.close()
     for i in range(0, len(data), 5):
+        print(data[i].decode('utf-8'))
         if data[i].decode('utf-8').strip('\n') == 'URL:' + url:
             # return (data[i+2], data[i+3])
-            pwd = clean_return_val(data[i+2])
-            nonce = clean_return_val(data[i+3])
+            pwd = data[i+2]
+            nonce = data[i+3]
             return (pwd, nonce) 
     print('Error: ' + url + ' is not present in the password file')
 
