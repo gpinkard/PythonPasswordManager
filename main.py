@@ -72,8 +72,6 @@ def is_first_session():
 
 
 def write_salt():
-
-    
     p_fi = open('.__PASS__.', 'w')
     p_fi.close()
 
@@ -105,7 +103,7 @@ def add_account():
 
     encoded_new_line = '\n'.encode('utf-8')
 
-    fi_contents +=  encoded_new_line + url + account_id + enc_pass + encoded_new_line + enc_nonce + encoded_new_line
+    fi_contents +=  url + account_id + enc_pass + encoded_new_line + enc_nonce + encoded_new_line + encoded_new_line
 
     pass_file = open('.__PASS__.', 'wb')
     pass_file.write(fi_contents)
@@ -153,20 +151,24 @@ def query_url():
 
 
 def enc_password():
-    #derive key from password
-    password = getpass.getpass('Master password: ')
-    confirm_password = getpass.getpass('Confirm password: ')
-    if password != confirm_password:
-        print('Passwords do not match.\n')
-        quit()
-    salt = get_salt()
-    key = PBKDF2(password, salt, 32, count = 100000)
-    password = ''
-    confirm_password = ''
-
     password = getpass.getpass("Enter the account password: ")
-    mapped_password = map_password(password)
     
+    master_pass = 'password' 
+    confirm_password = 'confirm'
+    while master_pass != confirm_password:
+        master_pass = getpass.getpass('Enter master password: ')
+        confirm_password = getpass.getpass('Confirm password: ')
+        if master_pass != confirm_password:
+            print('Passwords do not match.\n')
+        else:
+            break
+    
+    salt = get_salt()
+    key = PBKDF2(master_pass, salt, 32, count = 100000)
+    master_pass = ''
+    confirm_password = ''
+    
+    mapped_password = map_password(password)
     nonce = Random.get_random_bytes(int(AES.block_size/2))
     padded_nonce = nonce
     for x in range(int(AES.block_size/2)):
@@ -182,16 +184,23 @@ def enc_password():
     return (encrypted_password, encrypted_nonce)
 
 def enc_random_password():
-    #if user doesn't supply a password:
-    
-    password = getpass.getpass('Enter your master password: ')
-    confirm_password = getpass.getpass('Confirm password: ')
+    master_pass = 'password' 
+    confirm_password = 'confirm'
+    while master_pass != confirm_password:
+        master_pass = getpass.getpass('Enter master password: ')
+        confirm_password = getpass.getpass('Confirm password: ')
+        if master_pass != confirm_password:
+            print('Passwords do not match.\n')
+        else:
+            break
+
     salt = get_salt()
-    key = PBKDF2(password, salt, 32, count = 100000)
-    password = ''
+    key = PBKDF2(master_pass, salt, 32, count = 100000)
+    master_pass = ''
     confirm_password = ''
     
     password_length = 16
+    password = ''
 
     for x in range(password_length):
         random_ascii_value = random.randint(33,126)
@@ -216,6 +225,7 @@ def enc_random_password():
 
 
 def retrieve_password_dialog():
+    enc_data = ''
     while(True):
         print('type \'url\' to retrieve by URL, or \'username\' to retrieve by username')
         resp = input('> ')
@@ -310,52 +320,61 @@ def decrypt_password(enc_stuff):
     key = PBKDF2(password, salt, 32, count=100000)
     ecb_cipher = AES.new(key, AES.MODE_ECB)
     nonce = ecb_cipher.decrypt(enc_nonce)[0:int(AES.block_size/2)]
-    # intialize a counter with the nonce as prefix and initial counter value 0
     cntr = Counter.new(64, prefix=nonce, initial_value=0)
     ctr_cipher = AES.new(key, AES.MODE_CTR, counter=cntr)
     key = ''
     nonce = ''
-    #remove key, nonce from memory
+
     password = ctr_cipher.decrypt(enc_password)
     password = password.decode('utf-8')
     password = remap_password(password)
-    #copy password to clipboard
     pyperclip.copy(password)
+
     print(password)
+
     password = ''
     return
 
 def delete_password_dialog():
     print('Type the domain of the password you wish to delete')
     domain = input('> ')
-    exists = find_domain_ind(domain)
-    if exists != -1:
-        print('Are you sure you want to delete ' + domain + '[y/n]')
-        resp = input('> ').toLower()
-        if resp == 'y':
-            delete_password()
-    else:
-        print(domain + ' was not found in the password file')
+    print('Are you sure you want to delete ' + domain + '[y/N]')
+    resp = input('> ').lower()
+    if resp == 'y':
+        ind = get_ind(domain)
+        if ind != -1:
+            delete_password(domain, ind)
+        else:
+            print(domain + ' is not a valid domain')
 
         
 """
 deletes the specified password (account_url) from the password file
 """
-def delete_password(domain):
-    fi = file.open('.__PASS__.', 'rb')
+def delete_password(domain, ind):
+    fi = open('.__PASS__.', 'r')
     old_data = fi.readlines()
     fi.close()
     new_data = ''
-    ind = 0
-    for i in range(0, len(old_data)):
-        if old_data[i].decode('utf-8').strip() == 'URL:' + domain:
-            i += 3
-        if i < len(old_data):
-            new_data.append(data[i])
-    open('.__PASS__.', 'wb').close()
-    fi = file.open('.__PASS__.', 'wb')
-    fi.write(new_data)
+    if ind == 0:
+        new_data = old_data[4:]
+    else:
+        new_data = old_data[0:ind] + old_data[ind+4:]
+    fi = open('.__PASS__.', 'w')
+    for l in new_data:
+        fi.write(str(l))
     fi.close()
+    print('successfully deleted ' + domain)
+
+
+def get_ind(domain):
+    fi = open('.__PASS__.', 'rb')
+    data = fi.readlines()
+    fi.close()
+    for i in range(0, len(data)):
+        if data[i].decode('utf-8').strip('\n') == 'URL:' + domain:
+            return i
+    return -1
 
 
 def print_help():
