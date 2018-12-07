@@ -26,12 +26,6 @@ from mapping import *
 def main():
     print('\n=== Python Password Manager ===\n')
     key = ''
-    '''
-    if is_first_session():
-        key = first_session()
-    else:
-        key = begin_session()
-        '''
     if is_first_session():
         first_session()
     while(True):
@@ -69,7 +63,7 @@ def get_cmd():
     if cmd == 'add':
         add_account()
     elif cmd == 'delete':
-        delete_password()
+        delete_password_dialog()
     elif cmd == 'help':
         print_help()
     elif cmd == 'quit':
@@ -80,7 +74,6 @@ def get_cmd():
     else:
         print(cmd + ' is not a recognized command. Try \'help\'.')
 
-# to implement
 
 def is_first_session():
     if os.path.exists('.__META__.'):
@@ -125,17 +118,20 @@ def query_random_pass():
         resp = input('> ').lower()
         if resp == 'y':
             enc_result = enc_random_password()
+            break
+        elif resp == 'n':
+            enc_result = enc_password
+            break
         else:
-            enc_result = enc_password()
 
-    return enc_result # tuple (password, nonce)
-
+            print('an explicit y or n is required')
+  
 def query_account_id():
     while(True):
         print('What is the username for the account you are adding?')
         resp = input('> ')
         account_id = resp
-        print('Is ' + account_id + ' correct? [y/n]')
+        print('Is ' + account_id + ' correct? [y/N]')
         resp = input('> ')
         if resp == 'y':
             return account_id
@@ -146,7 +142,7 @@ def query_url():
         print('What is the URL for the account you are adding?')
         resp = input('> ')
         url = resp
-        print('Is ' + url + ' correct? [y/n]')
+        print('Is ' + url + ' correct? [y/N]')
         resp = input('> ')
         if resp == 'y':
             return url
