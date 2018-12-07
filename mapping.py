@@ -1,5 +1,5 @@
 '''
-Implements the mapping function described in mapping.txt.
+Implements the mapping function described in the change_log.
 '''
 
 

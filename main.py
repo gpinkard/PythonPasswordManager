@@ -337,12 +337,14 @@ def decrypt_password(enc_stuff):
     nonce = ''
 
     password = ctr_cipher.decrypt(enc_password)
-    password = password.decode('utf-8')
-    password = remap_password(password)
+    try:
+        password = password.decode('utf-8')
+    except Exception:
+        password = ''
+    if password != '':
+        password = remap_password(password)
+
     pyperclip.copy(password)
-
-    print(password)
-
     password = ''
     return
 
