@@ -257,7 +257,6 @@ def retrieve_encrypted_data_url(url):
     data = fi.readlines()
     fi.close()
     for i in range(0, len(data), 5):
-        print(data[i].decode('utf-8'))
         if data[i].decode('utf-8').strip('\n') == 'URL:' + url:
             # return (data[i+2], data[i+3])
             pwd = data[i+2]
@@ -299,6 +298,7 @@ def retrieve_encrypted_data_username(username):
         tmp = {}
         ctr = 1
         for acc in accounts.items():
+            # DON'T REMOVE THIS PRINT STATEMENT
             print(str(ctr) + ': ' + str(acc[0]))
             tmp[ctr] = acc[1]
             ctr += 1
@@ -306,13 +306,11 @@ def retrieve_encrypted_data_username(username):
             ind = int(input('> '))
             if ind > 0 and ind < len(accounts) + 1:
                 ind_account = tmp[ind]
-                print(data[ind_account+2], data[ind_account+3])
                 return (data[ind_account+2], data[ind_account+3])
             else:
                 print(str(ind) + ' is not a valid index for retrieval')
     elif len(accounts) == 1:
         ind = list(accounts.values())[0]
-        print((data[ind+2], data[ind+3]))
         return (data[ind+2], data[ind+3])
     else:
         print('The username ' + username + ' is not associated with any accounts')
