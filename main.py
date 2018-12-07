@@ -354,7 +354,7 @@ def delete_password_dialog():
     if resp == 'url':
         print('Enter the url of the account you would like to delete')
         url = input('> ')
-        print('Are you sure you want to delete ' + url + '[y/N]')
+        print('Are you sure you want to delete ' + url + '? [y/N]')
         resp = input('> ').lower()
         if resp == 'y':
             ind = get_ind_url(url)
@@ -387,9 +387,9 @@ def delete_password(domain, ind):
         new_data = old_data[5:]
     else:
         new_data = old_data[0:ind] + old_data[ind+5:]
-    fi = open('.__PASS__.', 'w')
+    fi = open('.__PASS__.', 'wb')
     for l in new_data:
-        fi.write(str(l))
+        fi.write(l)
     fi.close()
     print('successfully deleted ' + domain)
 
