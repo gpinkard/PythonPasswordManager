@@ -384,9 +384,9 @@ def delete_password(domain, ind):
     fi.close()
     new_data = ''
     if ind == 0:
-        new_data = old_data[4:]
+        new_data = old_data[5:]
     else:
-        new_data = old_data[0:ind] + old_data[ind+4:]
+        new_data = old_data[0:ind] + old_data[ind+5:]
     fi = open('.__PASS__.', 'w')
     for l in new_data:
         fi.write(str(l))
