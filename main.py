@@ -107,8 +107,8 @@ def add_account():
     url = query_url()
     account_id = query_account_id()
     query_random_pass() 
-    #enc_pass = enc_result[:-8]
-    #enc_nonce = enc_result[-8:]
+    enc_pass = enc_result[0]
+    enc_nonce = enc_result[1]
     #write url, account_id, enc_pass, enc_nonce to password file
 
 def query_random_pass():
@@ -121,8 +121,8 @@ def query_random_pass():
         else:
             enc_result = enc_password()
             return
-        # return password later
     
+    return enc_result # tuple
 
 def query_account_id():
     while(True):
@@ -165,8 +165,11 @@ def enc_password():
     counter = Counter.new(4*AES.block_size, prefix = nonce, initial_value = 0)
     cipher = AES.new(key, AES.MODE_CTR, counter=counter)
 
+    ecb_cipher = AES.new(key, AES.MODE_ECB)
+    encrypted_nonce = ecb_cipher.encrypt(nonce)
+
     encrypted_password = cipher.encrypt(mapped_password.encode('utf-8'))
-    return encrypted_password 
+    return (encrypted_password, encrypted_nonce)
 
 def enc_random_password():
     #if user doesn't supply a password:
@@ -196,8 +199,11 @@ def enc_random_password():
     counter = Counter.new(4*AES.block_size, prefix = nonce, initial_value = 0)
     cipher = AES.new(key, AES.MODE_CTR, counter=counter)
 
+    ecb_cipher = AES.new(key, AES.MODE_ECB)
+    encrypted_nonce = ecb_cipher.encrypt(nonce)
+
     encrypted_password = cipher.encrypt(mapped_password.encode('utf-8'))
-    return encrypted_password 
+    return (encrypted_password, encrypted_nonce)
 
 
 """
@@ -263,7 +269,8 @@ def decrypt_password(enc_stuff):
     cntr = Counter.new(64, prefix=nonce, initial_value=0)
     ctr_cipher = AES.new(key, AES.MODE_CTR, counter=cntr)
     #remove key, nonce from memory
-    password = ctr_cipher.decrypt(enc_password)
+    password = ctr_cipher.decrypt(enc_password).decode('utf-8')
+    password = remap_password(password)
     #copy password to clipboard
     pyperclip.copy(password)
     # may be unecessary, attempt to purge password from mem
