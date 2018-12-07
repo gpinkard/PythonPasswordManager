@@ -12,7 +12,7 @@ nonce
 import os.path
 import getpass
 import sys
-import pyperclip
+#import pyperclip
 from Crypto.Random import get_random_bytes
 from Crypto import Random
 from Crypto.Cipher import AES
@@ -52,15 +52,6 @@ def first_session():
             print('Passwords do not match.\n')
             password = ''
     write_salt()
-
-def begin_session():
-    print('Welcome. Please enter your master password.')
-    password = getpass.getpass('Master password: ')
-    confirm_password = getpass.getpass('Confirm password: ')
-    if password != confirm_password:
-        print('Passwords do not match.\n')
-        quit()
-        # derive key, return key
 
 
 def get_cmd():
