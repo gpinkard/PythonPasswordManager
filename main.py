@@ -238,13 +238,14 @@ def retrieve_encrypted_data_url(url):
     fi = open('.__PASS__.', 'rb')
     data = fi.readlines()
     fi.close()
-    for i in range(0, len(data)):
+    for i in range(0, len(data), 5):
         if data[i].decode('utf-8') == 'URL:' + url:
             # return (data[i+2], data[i+3])
             pwd = clean_return_val(data[i+2])
             nonce = clean_return_val(data[i+3])
             return (pwd, nonce) 
     print('Error: ' + url + ' is not present in the password file')
+
 
 
 """
@@ -263,19 +264,19 @@ retrieve encrypted data, but with a username.
 BIG AND UGLY :o
 """
 def retrieve_encrypted_data_username(username):
-    fi = open('.__PASS__.', 'r')
+    fi = open('.__PASS__.', 'rb')
     data = fi.readlines()
     fi.close()
     accounts = {}
-    for i in range(0, len(data)):
+    for i in range(1, len(data) - 4, 5):
         data[i] = data[i].decode('utf-8').strip()
         # data[i] = data[i].strip()
         if data[i] == "URL:" + username:
             # accounts.append(data[i-1]) # url is before username
             clean = clean_return_val(data[i-1])
             accounts[clean] = i-1
-    print('DEBUG: ' + tmp)
-    if len(accouts) > 1:
+    #print('DEBUG: ' + tmp)
+    if len(accounts) > 1:
         print('There are several accounts associated with the username ' + username)
         print('Type in the number associated with the account for retreival')
         tmp = {}
