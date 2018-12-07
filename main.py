@@ -1,4 +1,4 @@
-__author__ = "Ari Conati, Gabriel Pinkard, and Lindsay Coffee-Johnson"
+__author__ = "Ari Conati, Gabriel Pinkard, and Lindsey Coffee-Johnson"
 __licence__ = "MIT"
 
 """
@@ -51,9 +51,7 @@ def first_session():
         if password != confirm_password:
             print('Passwords do not match.\n')
             password = ''
-
     write_salt()
-
 
 def begin_session():
     print('Welcome. Please enter your master password.')
@@ -67,7 +65,6 @@ def begin_session():
 
 def get_cmd():
     print('Select an operation (add / delete / help / quit / retrieve)')
-    print(AES.block_size)
     cmd = input('> ').lower()
     if cmd == 'add':
         add_account()
@@ -93,44 +90,52 @@ def is_first_session():
 
 def write_salt():
     salt = Random.get_random_bytes(8)
-    fi = open('.__META__.', 'w')
+    fi = open('.__META__.', 'wb')
     fi.write(salt)
     fi.close()
 
 
 def get_salt():
     fi = open('.__META__.', 'rb')
-    salt = fi.readline()
+    salt = fi.read()
     fi.close()
     return salt
 
 def add_account():
-    url = ''
-    account_id = ''
-    enc_result = ''
-    url = query_url()
-    account_id = query_account_id()
+    url = query_url() + '\n'
+    account_id = query_account_id() + '\n'
     enc_result = query_random_pass() 
-    enc_pass = enc_result[0]
-    enc_nonce = enc_result[1]
-    #write url, account_id, enc_pass, enc_nonce to password file
-
-def query_random_pass():
-    print('Would you like a password randomly generated for this account? [y/N]')
-    resp = input('> ').lower()
-    if resp == 'y':
-        enc_result = enc_random_password()
-    else:
-        enc_result = enc_password()
+    enc_pass = enc_result[0] + '\n'
+    enc_nonce = enc_result[1] + '\n'
     
-    return enc_result # tuple - password, nonce
+    pass_file = open('.__PASS__.', 'r')
+    fi_contents = pass_file.read()
+    pass_file.close()
+
+    fi_contents += '\n' + url + account_id + enc_pass + enc_nonce
+
+    pass_file = open('.__PASS__.', 'w')
+    pass_file.write(fi_contents)
+    pass_file.close()
+    
+def query_random_pass():
+    enc_result = ''
+    while(True):
+        print('Would you like a password randomly generated for this account? [y/n]')
+        resp = input('> ').lower()
+        if resp == 'y':
+            enc_result = enc_random_password()
+        else:
+            enc_result = enc_password()
+
+    return enc_result # tuple (password, nonce)
 
 def query_account_id():
     while(True):
         print('What is the username for the account you are adding?')
         resp = input('> ')
         account_id = resp
-        print('Is ' + account_id + ' correct? [y/N]')
+        print('Is ' + account_id + ' correct? [y/n]')
         resp = input('> ')
         if resp == 'y':
             return account_id
@@ -141,7 +146,7 @@ def query_url():
         print('What is the URL for the account you are adding?')
         resp = input('> ')
         url = resp
-        print('Is ' + url + ' correct? [y/N]')
+        print('Is ' + url + ' correct? [y/n]')
         resp = input('> ')
         if resp == 'y':
             return url
@@ -232,10 +237,11 @@ BIG AND UGLY :o
 """
 def retrieve_encrypted_data_username(username):
     fi = open('.__PASS__.', 'r')
-    data = fi.readline()
+    data = fi.readlines()
     fi.close()
     accounts = {}
     for i in range(0, len(data)):
+        data[i] = data[i].strip()
         if data[i] == username:
             # accounts.append(data[i-1]) # url is before username
             accounts[data[i-1]] = i-1
@@ -264,8 +270,8 @@ def retrieve_encrypted_data_username(username):
 
 def decrypt_password(enc_stuff):
     #if we just want to pass both as one param:
-    enc_password = enc_stuff[:-8]
-    enc_nonce = enc_stuff[-8:]
+    enc_password = enc_stuff[0]
+    enc_nonce = enc_stuff[1]
     salt = get_salt()
     password = getpass.getpass('Enter your master password: ')
     key = PBKDF2(password, salt, 32, count=5000)
@@ -289,7 +295,7 @@ def delete_password_dialog():
     domain = input('> ')
     exists = find_domain_ind(domain)
     if exists != -1:
-        print('Are you sure you want to delete ' + domain + '[y/N]')
+        print('Are you sure you want to delete ' + domain + '[y/n]')
         resp = input('> ').toLower()
         if resp == 'y':
             delete_password()
