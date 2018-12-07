@@ -206,7 +206,7 @@ retrieves encryped password and iv as a tuple given a URL name
 """
 def retrieve_encrypted_data_url(url):
     fi = open('.__PASS__.', 'r')
-    data = fi.read('\n')
+    data = fi.readline()
     fi.close()
     for i in range(0, len(data)):
         if data[i] == url:
@@ -220,7 +220,7 @@ BIG AND UGLY :o
 """
 def retrieve_encrypted_data_username(username):
     fi = open('.__PASS__.', 'r')
-    data = fi.read('\n')
+    data = fi.readline()
     fi.close()
     accounts = {}
     for i in range(0, len(data)):
@@ -286,7 +286,7 @@ def delete_password_dialog():
 
 def find_domain_ind(domain):
     fi = file.open('.__PASS__.', 'r')
-    data = fi.read()
+    data = fi.readline()
     fi.close()
     for i in range(0, len(data)):
         if i % 4 == 0 and old_data[i] == account_url:
@@ -299,7 +299,7 @@ deletes the specified password (account_url) from the password file
 """
 def delete_password(domain):
     fi = file.open('.__PASS__.', 'r')
-    old_data = fi.read('\n')
+    old_data = fi.readline()
     fi.close()
     new_data = ''
     """
