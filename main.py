@@ -127,7 +127,7 @@ def query_random_pass():
     else:
         enc_result = enc_password()
     
-    return enc_result # tuple
+    return enc_result # tuple - password, nonce
 
 def query_account_id():
     while(True):
