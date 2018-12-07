@@ -220,12 +220,12 @@ def retrieve_password_dialog():
         resp = input('> ')
         if resp == 'url':
             print('enter the url (ex: www.facebook.com)')
-            resp = ('> ')
+            resp = input('> ')
             return retrieve_encrypted_data_url(resp)
         elif resp == 'username':
             print('enter the username (ex: jsmith)')
-            resp = ('> ')
-            return retrive_encrypted_data_username(resp)
+            resp = input('> ')
+            return retrieve_encrypted_data_username(resp)
             
 
 """
