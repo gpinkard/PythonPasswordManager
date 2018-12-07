@@ -134,6 +134,7 @@ def query_account_id():
         print('What is the username for the account you are adding?')
         resp = input('> ')
         account_id = resp
+        # this is a test
         print('Is ' + account_id + ' correct? [y/N]')
         resp = input('> ')
         if resp == 'y':
