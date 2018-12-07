@@ -387,13 +387,12 @@ Dialog for when a user wants to delete a password
 """
 def delete_password_dialog():
     while(True):
-        print('Would you like to delete account by \'url\' or \'username\'? (\'c\' to cancel)')
+        print('Enter the \'url\' of the account you would like to delete (\'c\' to cancel)')
         resp = input('> ').lower()
         if resp == 'c':
             return
-        if resp == 'url':
-            print('Enter the url of the account you would like to delete')
-            url = input('> ')
+        else:
+            url = resp
             print('Are you sure you want to delete ' + url + '? [y/N]')
             resp = input('> ').lower()
             if resp == 'y':
@@ -401,20 +400,8 @@ def delete_password_dialog():
                 if ind != -1:
                     delete_password(url, ind)
                     break
-            else:
-                print(url + ' is not a valid url')
-        elif resp == 'username':
-            print('Enter the username of the account you would like to delete')
-            username = input('> ')
-            print('Are you sure you want to delete ' + username + '[y/N]')
-            resp = input('> ').lower()
-            if resp == 'y':
-                ind = get_ind_username(username)
-                if ind != -1:
-                    delete_password(username, ind)
-                    break
                 else:
-                    print(username + ' is not a valid username')
+                    print(resp + ' is not a valid url')
 
 
 """
