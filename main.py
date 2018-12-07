@@ -19,7 +19,6 @@ from Crypto.Cipher import AES
 from Crypto.Protocol.KDF import PBKDF2
 from Crypto.Util import Padding
 from Crypto.Util import Counter
-
 from mapping import *
 
 
@@ -255,7 +254,7 @@ def clean_return_val(data):
     tmp = data.split(':')
     clean_str = ''
     for sub in tmp[1:]:
-        clean_str.append(sub)
+        clean_str += sub
     return clean_str
 
 
@@ -271,32 +270,30 @@ def retrieve_encrypted_data_username(username):
     for i in range(1, len(data) - 4, 5):
         data[i] = data[i].decode('utf-8').strip()
         # data[i] = data[i].strip()
-        if data[i] == "URL:" + username:
+        if data[i] == "USERNAME:" + username:
             # accounts.append(data[i-1]) # url is before username
             clean = clean_return_val(data[i-1])
             accounts[clean] = i-1
-    #print('DEBUG: ' + tmp)
     if len(accounts) > 1:
         print('There are several accounts associated with the username ' + username)
         print('Type in the number associated with the account for retreival')
         tmp = {}
         ctr = 1
         for acc in accounts.items():
-            print(str(ctr) + ': ' + acc)
-            tmp[ctr] = acc
+            print(str(ctr) + ': ' + str(acc))
+            tmp[ctr] = acc[1]
             ctr += 1
         while(True):
-            ind = input('> ')
-            if ind > 0 and ind < len(accounts + 1):
-                ind_account = accounts[tmp[ind]]
-                # pwd = clean_return_val(data[ind_account+2].decode('utf-8').strip())
-                # nonce = clean_return_val(data[ind_account+3].decode('utf-8').strip())
+            ind = int(input('> '))
+            if ind > 0 and ind < len(accounts) + 1:
+                ind_account = tmp[ind]
                 print(data[ind_account+2], data[ind_account+3])
                 return (data[ind_account+2], data[ind_account+3])
             else:
                 print(str(ind) + ' is not a valid index for retrieval')
     elif len(accounts) == 1:
         ind = list(accounts.values())[0]
+        print((data[ind+2], data[ind+3]))
         return (data[ind+2], data[ind+3])
     else:
         print('The username ' + username + ' is not associated with any accounts')
