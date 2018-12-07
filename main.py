@@ -124,7 +124,6 @@ def query_random_pass():
             break
         else:
             print('an explicit y or n is required')
-
     return enc_result
   
 def query_account_id():
@@ -222,12 +221,26 @@ retrieves encryped password and iv as a tuple given a URL name
 """
 def retrieve_encrypted_data_url(url):
     fi = open('.__PASS__.', 'r')
-    data = fi.readline()
+    data = fi.readlines()
     fi.close()
     for i in range(0, len(data)):
-        if data[i] == url:
-            return (data[i+2], data[i+3])
+        if data[i].decode('utf-8') == 'URL:' + url:
+            # return (data[i+2], data[i+3])
+            pwd = clean_return_val(data[i+2].decode('utf-8'))
+            nonce = clean_return_val(data[i+3].decode('utf-8'))
+            return (pwd, nonce) 
     print('Error: ' + url + ' is not present in the password file')
+
+
+"""
+removes URL, PASSWORD etc. tags from input. Expects non-encoded text
+"""
+def clean_return_val(data):
+    tmp = data.split(':')
+    clean_str = ''
+    for sub in tmp[1:]:
+        clean_str.append(sub)
+    return clean_str
 
 
 """
@@ -240,10 +253,13 @@ def retrieve_encrypted_data_username(username):
     fi.close()
     accounts = {}
     for i in range(0, len(data)):
-        data[i] = data[i].strip()
-        if data[i] == username:
+        data[i] = data[i].decode('utf-8').strip()
+        # data[i] = data[i].strip()
+        if data[i] == "URL:" + username:
             # accounts.append(data[i-1]) # url is before username
-            accounts[data[i-1]] = i-1
+            clean = clean_return_val(data[i-1])
+            accounts[clean] = i-1
+    print('DEBUG: ' + tmp)
     if len(accouts) > 1:
         print('There are several accounts associated with the username ' + username)
         print('Type in the number associated with the account for retreival')
@@ -257,6 +273,8 @@ def retrieve_encrypted_data_username(username):
             ind = input('> ')
             if ind > 0 and ind < len(accounts + 1):
                 ind_account = accounts[tmp[ind]]
+                # pwd = clean_return_val(data[ind_account+2].decode('utf-8').strip())
+                # nonce = clean_return_val(data[ind_account+3].decode('utf-8').strip())
                 print(data[ind_account+2], data[ind_account+3])
                 return (data[ind_account+2], data[ind_account+3])
             else:
@@ -302,36 +320,21 @@ def delete_password_dialog():
     else:
         print(domain + ' was not found in the password file')
 
-
-def find_domain_ind(domain):
-    fi = file.open('.__PASS__.', 'r')
-    data = fi.readline()
-    fi.close()
-    """
-    for i in range(0, len(data)):
-        if i % 4 == 0 and old_data[i] == account_url:
-            return i
-    return -1
-    """
-
-
+        
 """
 deletes the specified password (account_url) from the password file
 """
 def delete_password(domain):
     fi = file.open('.__PASS__.', 'r')
-    old_data = fi.readline()
+    old_data = fi.readlines()
     fi.close()
     new_data = ''
-    """
-    for i in range(0, len()):
-        if i % 4 == 0 and old_data[i] == account_url:
+    ind = 0
+    for i in range(0, len(old_data)):
+        if old_data[i].decode('utf-8').strip() == 'URL:' + domain:
             i += 3
-        new_data = new_data + old_data[i]
-    # erase contents of password file
-    """
-    ind = find_domain_ind(domain)
-    new_data = data[0:ind] + data[ind+4:]
+        if i < len(old_data):
+            new_data.append(data[i])
     open('.__PASS__.', 'w').close()
     fi = file.open('.__PASS__.', 'w')
     fi.write(new_data)
