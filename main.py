@@ -90,10 +90,10 @@ def is_first_session():
 
 
 def write_salt():
-    fi = open('.__META__.')
     salt = Random.get_random_bytes(8)
     fi = open('.__META__.', 'w')
     fi.write(salt)
+    fi.close()
 
 
 def get_salt():
@@ -108,7 +108,7 @@ def add_account():
     enc_result = query_random_pass() 
     enc_pass = enc_result[0] + '\n'
     enc_nonce = enc_result[1] + '\n'
-     
+    
     pass_file = open('.__PASS__.', 'r')
     fi_contents = pass_file.read()
     pass_file.close()
@@ -136,7 +136,7 @@ def query_account_id():
         print('What is the username for the account you are adding?')
         resp = input('> ')
         account_id = resp
-        print('Is ' + account_id + ' correct? [y/N]')
+        print('Is ' + account_id + ' correct? [y/n]')
         resp = input('> ')
         if resp == 'y':
             return account_id
@@ -147,7 +147,7 @@ def query_url():
         print('What is the URL for the account you are adding?')
         resp = input('> ')
         url = resp
-        print('Is ' + url + ' correct? [y/N]')
+        print('Is ' + url + ' correct? [y/n]')
         resp = input('> ')
         if resp == 'y':
             return url
@@ -185,7 +185,6 @@ def enc_random_password():
     #if user doesn't supply a password:
     
     password = getpass.getpass('Enter your master password: ')
-    password = getpass.getpass('Master password: ')
     confirm_password = getpass.getpass('Confirm password: ')
     salt = get_salt()
     key = PBKDF2(password, salt, 32, count = 5000)
@@ -271,8 +270,8 @@ def retrieve_encrypted_data_username(username):
 
 def decrypt_password(enc_stuff):
     #if we just want to pass both as one param:
-    enc_password = enc_stuff[:-8]
-    enc_nonce = enc_stuff[-8:]
+    enc_password = enc_stuff[0]
+    enc_nonce = enc_stuff[1]
     salt = get_salt()
     password = getpass.getpass('Enter your master password: ')
     key = PBKDF2(password, salt, 32, count=5000)
@@ -296,7 +295,7 @@ def delete_password_dialog():
     domain = input('> ')
     exists = find_domain_ind(domain)
     if exists != -1:
-        print('Are you sure you want to delete ' + domain + '[y/N]')
+        print('Are you sure you want to delete ' + domain + '[y/n]')
         resp = input('> ').toLower()
         if resp == 'y':
             delete_password()
