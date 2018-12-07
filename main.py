@@ -12,7 +12,7 @@ nonce
 import os.path
 import getpass
 import sys
-import pyperclip
+#import pyperclip
 from Crypto.Random import get_random_bytes
 from Crypto import Random
 from Crypto.Cipher import AES
@@ -26,7 +26,6 @@ from mapping import *
 def main():
     print('\n=== Python Password Manager ===\n')
     key = ''
-    write_salt()
     if is_first_session():
         first_session()
     while(True):
@@ -111,7 +110,6 @@ def add_account():
     pass_file = open('.__PASS__.', 'wb')
     pass_file.write(fi_contents)
     pass_file.close()
-    print('Password added successfully.\n')
     
 def query_random_pass():
     enc_result = ''
@@ -232,14 +230,14 @@ def retrieve_password_dialog():
 retrieves encryped password and iv as a tuple given a URL name
 """
 def retrieve_encrypted_data_url(url):
-    fi = open('.__PASS__.', 'r')
+    fi = open('.__PASS__.', 'rb')
     data = fi.readlines()
     fi.close()
-    for i in range(0, len(data)):
-        if data[i].decode('utf-8') == 'URL:' + url:
+    for i in range(0, len(data), 5):
+        if data[i].decode('utf-8').strip('\n') == 'URL:' + url:
             # return (data[i+2], data[i+3])
-            pwd = clean_return_val(data[i+2].decode('utf-8'))
-            nonce = clean_return_val(data[i+3].decode('utf-8'))
+            pwd = clean_return_val(data[i+2])
+            nonce = clean_return_val(data[i+3])
             return (pwd, nonce) 
     print('Error: ' + url + ' is not present in the password file')
 
@@ -316,7 +314,8 @@ def decrypt_password(enc_stuff):
     password = ctr_cipher.decrypt(enc_password).decode('utf-8')
     password = remap_password(password)
     #copy password to clipboard
-    pyperclip.copy(password)
+   # pyperclip.copy(password)
+    print(password)
     password = ''
     return
 
