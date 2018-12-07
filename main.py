@@ -94,6 +94,7 @@ def get_salt():
     fi.close()
     return salt
 
+
 def add_account():
     url = query_url() + '\n'
     account_id = query_account_id() + '\n'
@@ -127,6 +128,7 @@ def query_random_pass():
             print('an explicit y or n is required')
     return enc_result # tuple
 
+
 def query_account_id():
     while(True):
         print('What is the username for the account you are adding?')
@@ -147,6 +149,7 @@ def query_url():
         resp = input('> ')
         if resp == 'y':
             return url
+
 
 def enc_password():
     #derive key from password
@@ -304,10 +307,13 @@ def find_domain_ind(domain):
     fi = file.open('.__PASS__.', 'r')
     data = fi.readline()
     fi.close()
+    """
     for i in range(0, len(data)):
         if i % 4 == 0 and old_data[i] == account_url:
             return i
     return -1
+    """
+    for 
 
 
 """
