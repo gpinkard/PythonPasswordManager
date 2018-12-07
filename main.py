@@ -62,7 +62,8 @@ def get_cmd():
         print('Goodbye.')
         quit()
     elif cmd == 'retrieve':
-        retrieve_password()
+        # retrieve_password()
+        retrieve_password_dialog()
     else:
         print(cmd + ' is not a recognized command. Try \'help\'.')
 
@@ -216,6 +217,16 @@ def enc_random_password():
     return (encrypted_password, encrypted_nonce)
 
 
+def retrieve_password_dialog():
+    while(True):
+        print('type \'url\' to retrieve by URL, or \'username\'')
+        resp = input('> ')
+        if resp == 'url':
+            return retrieve_encrypted_data_url(resp)
+        elif resp == 'username':
+            return retrive_encrypted_data_username(resp)
+            
+
 """
 retrieves encryped password and iv as a tuple given a URL name
 """
@@ -342,12 +353,14 @@ def delete_password(domain):
 
 
 def print_help():
-    print('Python Password Manager Help Dialog\n')
-    print('add - [domain] add new username/domain and password combination')
-    print('delete [domain] - remove a username/domain and password combination')
-    print('help - print this help')
-    print('quit - exit this program')
-    print('retrieve [domain] - retrieve password associated with domain\n')
+    print("""
+    Python Password Manager Help Dialog\n
+    add - [domain] add new username/domain and password combination
+    delete [domain] - remove a username/domain and password combination
+    help - print this help
+    quit - exit this program
+    retrieve [domain] - retrieve password associated with domain\n
+    """)
 
 
 if __name__ == '__main__':
