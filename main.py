@@ -86,19 +86,23 @@ def get_salt():
     return salt
 
 def add_account():
-    url = query_url() + '\n'
-    account_id = query_account_id() + '\n'
+    url = 'URL: ' + query_url() + '\n'
+    url = url.encode('utf-8')
+    account_id = 'USER NAME: ' + query_account_id() + '\n'
+    account_id = account_id.encode('utf-8')
     enc_result = query_random_pass() 
-    enc_pass = enc_result[0] + '\n'
-    enc_nonce = enc_result[1] + '\n'
+    enc_pass = enc_result[0]
+    enc_nonce = enc_result[1]
     
-    pass_file = open('.__PASS__.', 'r')
+    pass_file = open('.__PASS__.', 'rb')
     fi_contents = pass_file.read()
     pass_file.close()
 
-    fi_contents += '\n' + url + account_id + enc_pass + enc_nonce
+    encoded_new_line = '\n'.encode('utf-8')
 
-    pass_file = open('.__PASS__.', 'w')
+    fi_contents +=  encoded_new_line + url + account_id + enc_pass + encoded_new_line + enc_nonce + encoded_new_line
+
+    pass_file = open('.__PASS__.', 'wb')
     pass_file.write(fi_contents)
     pass_file.close()
     
@@ -111,11 +115,12 @@ def query_random_pass():
             enc_result = enc_random_password()
             break
         elif resp == 'n':
-            enc_result = enc_password
+            enc_result = enc_password()
             break
         else:
-
             print('an explicit y or n is required')
+
+    return enc_result
   
 def query_account_id():
     while(True):
