@@ -6,7 +6,7 @@ ENCRYPTED PASSWORD ENTRY FORMAT:
 URL
 username/id
 password
-iv
+nonce
 """
 
 import os.path
@@ -63,7 +63,6 @@ def begin_session():
         print('Passwords do not match.\n')
         quit()
         # derive key, return key
-    
 
 
 def get_cmd():
@@ -81,9 +80,6 @@ def get_cmd():
         quit()
     elif cmd == 'retrieve':
         retrieve_password()
-        quit()
-    elif cmd == 'retrieve':
-        retrievePassword()
     else:
         print(cmd + ' is not a recognized command. Try \'help\'.')
 
