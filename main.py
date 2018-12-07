@@ -110,6 +110,8 @@ def add_account():
     pass_file = open('.__PASS__.', 'wb')
     pass_file.write(fi_contents)
     pass_file.close()
+
+    print('Account successfully added.')
     
 def query_random_pass():
     enc_result = ''
