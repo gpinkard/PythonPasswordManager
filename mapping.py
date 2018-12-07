@@ -1,5 +1,5 @@
 '''
-Implements the mapping function described in mapping_scheme.txt.
+Implements the mapping function described in mapping.md.
 '''
 
 
