@@ -109,7 +109,7 @@ def add_account():
     enc_result = query_random_pass() 
     enc_pass = enc_result[0]
     enc_nonce = enc_result[1]
-    
+
     pass_file = open('.__PASS__.', 'rb')
     fi_contents = pass_file.read()
     pass_file.close()
@@ -124,7 +124,7 @@ def add_account():
 
     print('Account successfully added.\n')
 
-    
+
 """
 Asks user if they would like to generate a random password instead of using one of their own.
 """
@@ -142,7 +142,7 @@ def query_random_pass():
         else:
             print('an explicit y or n is required')
     return enc_result
-  
+
 """
 Asks the user for the username of the account they are creating.
 """
@@ -156,7 +156,7 @@ def query_account_id():
         resp = input('> ')
         if resp == 'y':
             return account_id
-    
+
 
 """
 Asks user for URL when adding a new account.
@@ -177,7 +177,7 @@ Query user for password, then encrypt it. Returns encrypted password and encrypt
 """
 def enc_password():
     password = getpass.getpass("Enter the account password: ")
-    
+
     master_pass = 'password' 
     confirm_password = 'confirm'
     while master_pass != confirm_password:
@@ -187,18 +187,18 @@ def enc_password():
             print('Passwords do not match.\n')
         else:
             break
-    
+
     salt = get_salt()
     key = PBKDF2(master_pass, salt, 32, count = 100000)
     master_pass = ''
     confirm_password = ''
-    
+
     mapped_password = map_password(password)
     nonce = Random.get_random_bytes(int(AES.block_size/2))
     padded_nonce = nonce
     for x in range(int(AES.block_size/2)):
         padded_nonce += b'\x00'
-        
+
     counter = Counter.new(4*AES.block_size, prefix = nonce, initial_value = 0)
     cipher = AES.new(key, AES.MODE_CTR, counter=counter)
 
@@ -226,7 +226,7 @@ def enc_random_password():
     key = PBKDF2(master_pass, salt, 32, count = 100000)
     master_pass = ''
     confirm_password = ''
-    
+
     password_length = 16
     password = ''
 
@@ -236,7 +236,7 @@ def enc_random_password():
 
 
     mapped_password = map_password(password)
-    
+
     nonce = Random.get_random_bytes(int(AES.block_size/2))
     padded_nonce = nonce
     for x in range(int(AES.block_size/2)):
@@ -278,7 +278,8 @@ def retrieve_password_dialog():
             else:
                 print(resp + ' is not a valid username')
             break
-            
+    print('password copied to clipboard')
+
 
 """
 retrieves encryped password and iv as a tuple given a URL name
@@ -385,34 +386,37 @@ def decrypt_password(enc_stuff):
 Dialog for when a user wants to delete a password
 """
 def delete_password_dialog():
-    print('Would you like to delete account by \'url\' or \'username\'? (\'c\' to cancel)')
-    resp = input('> ').lower()
-    if resp == 'c':
-        return
-    if resp == 'url':
-        print('Enter the url of the account you would like to delete')
-        url = input('> ')
-        print('Are you sure you want to delete ' + url + '? [y/N]')
+    while(True):
+        print('Would you like to delete account by \'url\' or \'username\'? (\'c\' to cancel)')
         resp = input('> ').lower()
-        if resp == 'y':
-            ind = get_ind_url(url)
-            if ind != -1:
-                delete_password(url, ind)
+        if resp == 'c':
+            return
+        if resp == 'url':
+            print('Enter the url of the account you would like to delete')
+            url = input('> ')
+            print('Are you sure you want to delete ' + url + '? [y/N]')
+            resp = input('> ').lower()
+            if resp == 'y':
+                ind = get_ind_url(url)
+                if ind != -1:
+                    delete_password(url, ind)
+                    break
             else:
                 print(url + ' is not a valid url')
-    elif resp == 'username':
-        print('Enter the username of the account you would like to delete')
-        username = input('> ')
-        print('Are you sure you want to delete ' + username + '[y/N]')
-        resp = input('> ').lower()
-        if resp == 'y':
-            ind = get_ind_username(username)
-            if ind != -1:
-                delete_password(username, ind)
-            else:
-                print(username + ' is not a valid username')
+        elif resp == 'username':
+            print('Enter the username of the account you would like to delete')
+            username = input('> ')
+            print('Are you sure you want to delete ' + username + '[y/N]')
+            resp = input('> ').lower()
+            if resp == 'y':
+                ind = get_ind_username(username)
+                if ind != -1:
+                    delete_password(username, ind)
+                    break
+                else:
+                    print(username + ' is not a valid username')
 
-        
+
 """
 deletes the specified password (account_url) from the password file
 """
@@ -470,4 +474,4 @@ def print_help():
 
 
 if __name__ == '__main__':
-    main()
+        main()
