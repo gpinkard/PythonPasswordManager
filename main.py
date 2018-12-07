@@ -33,7 +33,7 @@ def main():
         key = begin_session()
         '''
     if is_first_session():
-        write_salt()
+        first_session()
     while(True):
         get_cmd()
 
@@ -192,7 +192,7 @@ def enc_random_password():
     
     password_length = 0
     while password_length < 8:
-        password_length = input("Enter the desired length of the account password (minimum 8) :")
+        password_length = int(input("Enter the desired length of the account password (minimum 8) :"))
         if password_length < 8:
             print("Password must be at least 8 characters long.")
 
@@ -203,7 +203,7 @@ def enc_random_password():
 
     mapped_password = map_password(password)
     
-    nonce = Random.get_random_bytes(AES.block_size/2)
+    nonce = Random.get_random_bytes(int(AES.block_size/2))
     padded_nonce = nonce
     for x in range(int(AES.block_size/2)):
         padded_nonce += b'\x00'
