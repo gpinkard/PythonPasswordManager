@@ -347,25 +347,39 @@ def decrypt_password(enc_stuff):
     return
 
 def delete_password_dialog():
-    print('Type the domain of the password you wish to delete, or type \'c\' to cancel')
-    domain = input('> ')
-    if domain == 'C' or domain == 'c':
-        return
-    print('Are you sure you want to delete ' + domain + '[y/N]')
+    print('Would you like to delete account by \'url\' or \'username\'? (\'c\' to cancel)')
     resp = input('> ').lower()
-    if resp == 'y':
-        ind = get_ind(domain)
-        if ind != -1:
-            delete_password(domain, ind)
-        else:
-            print(domain + ' is not a valid domain')
+    if resp == 'c':
+        return
+    if resp == 'url':
+        print('Enter the url of the account you would like to delete')
+        url = input('> ')
+        print('Are you sure you want to delete ' + url + '[y/N]')
+        resp = input('> ').lower()
+        if resp == 'y':
+            ind = get_ind_url(url)
+            if ind != -1:
+                delete_password(url, ind)
+            else:
+                print(url + ' is not a valid url')
+    elif resp == 'username':
+        print('Enter the username of the account you would like to delete')
+        username = input('> ')
+        print('Are you sure you want to delete ' + username + '[y/N]')
+        resp = input('> ').lower()
+        if resp == 'y':
+            ind = get_ind_username(username)
+            if ind != -1:
+                delete_password(username, ind)
+            else:
+                print(username + ' is not a valid username')
 
         
 """
 deletes the specified password (account_url) from the password file
 """
 def delete_password(domain, ind):
-    fi = open('.__PASS__.', 'r')
+    fi = open('.__PASS__.', 'rb')
     old_data = fi.readlines()
     fi.close()
     new_data = ''
@@ -380,13 +394,22 @@ def delete_password(domain, ind):
     print('successfully deleted ' + domain)
 
 
-def get_ind(domain):
+def get_ind_url(url):
     fi = open('.__PASS__.', 'rb')
     data = fi.readlines()
     fi.close()
-    for i in range(0, len(data)):
-        if data[i].decode('utf-8').strip('\n') == 'URL:' + domain:
+    for i in range(0, len(data), 5):
+        if data[i].decode('utf-8').strip('\n') == 'URL:' + url:
             return i
+    return -1
+
+def get_ind_username(username):
+    fi = open('.__PASS__.', 'rb')
+    data = fi.readlines()
+    fi.close()
+    for i in range(1, len(data), 5):
+        if data[i].decode('utf-8').strip('\n') == 'USERNAME:' + username:
+            return (i - 1) 
     return -1
 
 
