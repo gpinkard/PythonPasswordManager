@@ -45,6 +45,7 @@ def first_session():
         if password != confirm_password:
             print('Passwords do not match.\n')
             password = ''
+    # create password file, meta file
     # derive key, hash
     # return key
 
@@ -97,24 +98,32 @@ def write_salt():
 
 def get_salt():
     fi = open('.__META__.', 'rb')
-    salt = fi.readline()
+    salt = fi.read()
     fi.close()
     return salt
 
 def add_account():
-    url = ''
-    account_id = ''
-    enc_result = ''
-    url = query_url()
-    account_id = query_account_id()
-    query_random_pass() 
-    #enc_pass = enc_result[:-8]
-    #enc_nonce = enc_result[-8:]
-    #write url, account_id, enc_pass, enc_nonce to password file
+    url = query_url() + '\n'
+    account_id = query_account_id() + '\n'
+    enc_result = query_random_pass() 
+    enc_pass = enc_result[:-8] + '\n'
+    enc_nonce = enc_result[-8:] + '\n'
+     
+    pass_file = open('.__PASS__.', 'r')
+    fi_contents = pass_file.read()
+    pass_file.close()
+
+    fi_contents += '\n' + url + account_id + enc_pass + enc_nonce
+
+    pass_file = open('.__PASS__.', 'w')
+    pass_file.write()
+    pass_file.close()
+    
 
 def query_random_pass():
+    enc_result = ''
     while(True):
-        print('Would you like a password randomly generated for this account? [y/N]')
+        print('Would you like a password randomly generated for this account? [y/n]')
         resp = input('> ').lower()
         if resp == 'y':
             enc_result = enc_random_password()
