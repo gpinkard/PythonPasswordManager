@@ -1,4 +1,4 @@
-__author__ = "Ari Conati, Gabriel Pinkard, and Lindsay Coffee-Johnson"
+__author__ = "Ari Conati, Gabriel Pinkard, and Lindsey Coffee-Johnson"
 __licence__ = "MIT"
 
 """
@@ -6,7 +6,7 @@ ENCRYPTED PASSWORD ENTRY FORMAT:
 URL
 username/id
 password
-iv
+nonce
 """
 
 import os.path
@@ -116,7 +116,7 @@ def add_account():
     fi_contents += '\n' + url + account_id + enc_pass + enc_nonce
 
     pass_file = open('.__PASS__.', 'w')
-    pass_file.write()
+    pass_file.write(fi_contents)
     pass_file.close()
     
 
