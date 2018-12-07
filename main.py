@@ -335,14 +335,10 @@ def decrypt_password(enc_stuff):
     ctr_cipher = AES.new(key, AES.MODE_CTR, counter=cntr)
     key = ''
     nonce = ''
-
     password = ctr_cipher.decrypt(enc_password)
     password = password.decode('utf-8')
     password = remap_password(password)
     pyperclip.copy(password)
-
-    print(password)
-
     password = ''
     return
 
