@@ -103,7 +103,7 @@ def add_account():
 
     encoded_new_line = '\n'.encode('utf-8')
 
-    fi_contents +=  url + account_id + enc_pass + encoded_new_line + enc_nonce + encoded_new_line + encoded_new_line
+    fi_contents +=  encoded_new_line + url + account_id + enc_pass + encoded_new_line + enc_nonce + encoded_new_line + encoded_new_line
 
     pass_file = open('.__PASS__.', 'wb')
     pass_file.write(fi_contents)
