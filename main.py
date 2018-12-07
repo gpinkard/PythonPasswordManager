@@ -90,8 +90,8 @@ def is_first_session():
 
 def write_salt():
     salt = Random.get_random_bytes(8)
-    fi = open('.__META__.', 'w')
-    fi.write(str(salt))
+    fi = open('.__META__.', 'wb')
+    fi.write(salt)
     fi.close()
 
 
@@ -126,8 +126,10 @@ def query_random_pass():
         resp = input('> ').lower()
         if resp == 'y':
             enc_result = enc_random_password()
+        elif resp == 'n':
+            enc_result = enc_password
         else:
-            enc_result = enc_password()
+            print('an explicit y or n is required')
     return enc_result # tuple
 
 def query_account_id():
@@ -135,7 +137,7 @@ def query_account_id():
         print('What is the username for the account you are adding?')
         resp = input('> ')
         account_id = resp
-        print('Is ' + account_id + ' correct? [y/n]')
+        print('Is ' + account_id + ' correct? [y/N]')
         resp = input('> ')
         if resp == 'y':
             return account_id
@@ -146,7 +148,7 @@ def query_url():
         print('What is the URL for the account you are adding?')
         resp = input('> ')
         url = resp
-        print('Is ' + url + ' correct? [y/n]')
+        print('Is ' + url + ' correct? [y/N]')
         resp = input('> ')
         if resp == 'y':
             return url
