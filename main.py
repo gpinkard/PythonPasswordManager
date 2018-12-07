@@ -19,7 +19,6 @@ from Crypto.Cipher import AES
 from Crypto.Protocol.KDF import PBKDF2
 from Crypto.Util import Padding
 from Crypto.Util import Counter
-
 from mapping import *
 
 
@@ -74,6 +73,8 @@ def is_first_session():
 
 
 def write_salt():
+
+    
     p_fi = open('.__PASS__.', 'w')
     p_fi.close()
 
@@ -110,6 +111,9 @@ def add_account():
     pass_file = open('.__PASS__.', 'wb')
     pass_file.write(fi_contents)
     pass_file.close()
+
+    print('Account successfully added.\n')
+
     
 def query_random_pass():
     enc_result = ''
@@ -157,7 +161,7 @@ def enc_password():
         print('Passwords do not match.\n')
         quit()
     salt = get_salt()
-    key = PBKDF2(password, salt, 32, count = 5000)
+    key = PBKDF2(password, salt, 32, count = 100000)
     password = ''
     confirm_password = ''
 
@@ -184,7 +188,7 @@ def enc_random_password():
     password = getpass.getpass('Enter your master password: ')
     confirm_password = getpass.getpass('Confirm password: ')
     salt = get_salt()
-    key = PBKDF2(password, salt, 32, count = 5000)
+    key = PBKDF2(password, salt, 32, count = 100000)
     password = ''
     confirm_password = ''
     
@@ -249,7 +253,7 @@ def clean_return_val(data):
     tmp = data.split(':')
     clean_str = ''
     for sub in tmp[1:]:
-        clean_str.append(sub)
+        clean_str += sub
     return clean_str
 
 
@@ -258,39 +262,37 @@ retrieve encrypted data, but with a username.
 BIG AND UGLY :o
 """
 def retrieve_encrypted_data_username(username):
-    fi = open('.__PASS__.', 'r')
+    fi = open('.__PASS__.', 'rb')
     data = fi.readlines()
     fi.close()
     accounts = {}
     for i in range(0, len(data)):
-        data[i] = data[i].decode('utf-8').strip()
+        data[i] = str(data[i].decode('utf-8').strip('\n'))
         # data[i] = data[i].strip()
-        if data[i] == "URL:" + username:
+        if data[i] == "USERNAME:" + username:
             # accounts.append(data[i-1]) # url is before username
             clean = clean_return_val(data[i-1])
             accounts[clean] = i-1
-    print('DEBUG: ' + tmp)
-    if len(accouts) > 1:
+    if len(accounts) > 1:
         print('There are several accounts associated with the username ' + username)
         print('Type in the number associated with the account for retreival')
         tmp = {}
         ctr = 1
         for acc in accounts.items():
-            print(str(ctr) + ': ' + acc)
-            tmp[ctr] = acc
+            print(str(ctr) + ': ' + str(acc))
+            tmp[ctr] = acc[1]
             ctr += 1
         while(True):
-            ind = input('> ')
-            if ind > 0 and ind < len(accounts + 1):
-                ind_account = accounts[tmp[ind]]
-                # pwd = clean_return_val(data[ind_account+2].decode('utf-8').strip())
-                # nonce = clean_return_val(data[ind_account+3].decode('utf-8').strip())
+            ind = int(input('> '))
+            if ind > 0 and ind < len(accounts) + 1:
+                ind_account = tmp[ind]
                 print(data[ind_account+2], data[ind_account+3])
                 return (data[ind_account+2], data[ind_account+3])
             else:
                 print(str(ind) + ' is not a valid index for retrieval')
     elif len(accounts) == 1:
         ind = list(accounts.values())[0]
+        print((data[ind+2], data[ind+3]))
         return (data[ind+2], data[ind+3])
     else:
         print('The username ' + username + ' is not associated with any accounts')
@@ -301,7 +303,7 @@ def decrypt_password(enc_stuff):
     enc_nonce = enc_stuff[1]
     salt = get_salt()
     password = getpass.getpass('Enter your master password: ')
-    key = PBKDF2(password, salt, 32, count=5000)
+    key = PBKDF2(password, salt, 32, count=100000)
     #remove password from memory
     ecb_cipher = AES.new(key, AES.MODE_ECB)
     nonce = ecb_cipher.decrypt(enc_nonce)[0:int(AES.block_size/2)]
