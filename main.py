@@ -68,22 +68,29 @@ def get_cmd():
         print(cmd + ' is not a recognized command. Try \'help\'.')
 
 
+"""
+Returns true if this is the first session ever.
+"""
 def is_first_session():
     if os.path.exists('.__META__.'):
         return False
     return True
 
-
+"""
+Generates and writes salt to file.
+"""
 def write_salt():
     p_fi = open('.__PASS__.', 'w')
     p_fi.close()
-
     salt = Random.get_random_bytes(8)
     fi = open('.__META__.', 'wb')
     fi.write(salt)
     fi.close()
 
 
+"""
+Returns salt from file.
+"""
 def get_salt():
     fi = open('.__META__.', 'rb')
     salt = fi.read()
@@ -91,6 +98,9 @@ def get_salt():
     return salt
 
 
+"""
+Adds account to password file.
+"""
 def add_account():
     url = 'URL:' + query_url() + '\n'
     url = url.encode('utf-8')
@@ -115,6 +125,9 @@ def add_account():
     print('Account successfully added.\n')
 
     
+"""
+Asks user if they would like to generate a random password instead of using one of their own.
+"""
 def query_random_pass():
     enc_result = ''
     while(True):
@@ -130,6 +143,9 @@ def query_random_pass():
             print('an explicit y or n is required')
     return enc_result
   
+"""
+Asks the user for the username of the account they are creating.
+"""
 def query_account_id():
     while(True):
         print('What is the username for the account you are adding?')
@@ -142,6 +158,9 @@ def query_account_id():
             return account_id
     
 
+"""
+Asks user for URL when adding a new account.
+"""
 def query_url():
     while(True):
         print('What is the URL for the account you are adding?')
@@ -153,6 +172,9 @@ def query_url():
             return url
 
 
+"""
+Query user for password, then encrypt it. Returns encrypted password and encrypted nonce
+"""
 def enc_password():
     password = getpass.getpass("Enter the account password: ")
     
@@ -186,6 +208,9 @@ def enc_password():
     encrypted_password = cipher.encrypt(mapped_password.encode('utf-8'))
     return (encrypted_password, encrypted_nonce)
 
+"""
+Generates a random password for the user
+"""
 def enc_random_password():
     master_pass = 'password' 
     confirm_password = 'confirm'
@@ -227,6 +252,9 @@ def enc_random_password():
     return (encrypted_password, encrypted_nonce)
 
 
+"""
+Query user for retrieving password
+"""
 def retrieve_password_dialog():
     enc_data = ''
     while(True):
@@ -323,6 +351,9 @@ def retrieve_encrypted_data_username(username):
     else:
         print('The username ' + username + ' is not associated with any accounts')
 
+"""
+decrypts password
+"""
 def decrypt_password(enc_stuff):
     enc_password = enc_stuff[0]
     enc_password = enc_password[0:len(enc_password) - 1]
@@ -350,6 +381,9 @@ def decrypt_password(enc_stuff):
     password = ''
     return
 
+"""
+Dialog for when a user wants to delete a password
+"""
 def delete_password_dialog():
     print('Would you like to delete account by \'url\' or \'username\'? (\'c\' to cancel)')
     resp = input('> ').lower()
@@ -398,6 +432,9 @@ def delete_password(domain, ind):
     print('successfully deleted ' + domain)
 
 
+"""
+gets the index in the password file for a given url
+"""
 def get_ind_url(url):
     fi = open('.__PASS__.', 'rb')
     data = fi.readlines()
@@ -407,6 +444,10 @@ def get_ind_url(url):
             return i
     return -1
 
+
+"""
+gets the index for a username in the password file given a username
+"""
 def get_ind_username(username):
     fi = open('.__PASS__.', 'rb')
     data = fi.readlines()
