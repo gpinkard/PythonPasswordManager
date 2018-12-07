@@ -103,7 +103,7 @@ def add_account():
 
     encoded_new_line = '\n'.encode('utf-8')
 
-    fi_contents +=  encoded_new_line + url + account_id + enc_pass + encoded_new_line + enc_nonce + encoded_new_line + encoded_new_line
+    fi_contents +=  url + account_id + enc_pass + encoded_new_line + enc_nonce + encoded_new_line + encoded_new_line
 
     pass_file = open('.__PASS__.', 'wb')
     pass_file.write(fi_contents)
@@ -248,7 +248,7 @@ def retrieve_encrypted_data_url(url):
     fi = open('.__PASS__.', 'rb')
     data = fi.readlines()
     fi.close()
-    for i in range(1, len(data), 5):
+    for i in range(0, len(data), 5):
         print(data[i].decode('utf-8'))
         if data[i].decode('utf-8').strip('\n') == 'URL:' + url:
             # return (data[i+2], data[i+3])
@@ -278,7 +278,7 @@ def retrieve_encrypted_data_username(username):
     data = fi.readlines()
     fi.close()
     accounts = {}
-    for i in range(2, len(data), 5):
+    for i in range(1, len(data), 5):
         data[i] = str(data[i].decode('utf-8').strip('\n'))
         # data[i] = data[i].strip()
         if data[i] == "USERNAME:" + username:
@@ -336,8 +336,10 @@ def decrypt_password(enc_stuff):
     return
 
 def delete_password_dialog():
-    print('Type the domain of the password you wish to delete')
+    print('Type the domain of the password you wish to delete, or type \'c\' to cancel')
     domain = input('> ')
+    if domain == 'C' or domain == 'c':
+        return
     print('Are you sure you want to delete ' + domain + '[y/N]')
     resp = input('> ').lower()
     if resp == 'y':
