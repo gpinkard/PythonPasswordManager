@@ -60,7 +60,6 @@ def get_cmd():
         print('Goodbye.')
         quit()
     elif cmd == 'retrieve':
-        # retrieve_password()
         retrieve_password_dialog()
     else:
         print(cmd + ' is not a recognized command. Try \'help\'.')
@@ -161,7 +160,7 @@ def enc_password():
         print('Passwords do not match.\n')
         quit()
     salt = get_salt()
-    key = PBKDF2(password, salt, 32, count = 100000)
+    key = PBKDF2(password, salt, 32, count = 5000)
     password = ''
     confirm_password = ''
 
@@ -188,7 +187,7 @@ def enc_random_password():
     password = getpass.getpass('Enter your master password: ')
     confirm_password = getpass.getpass('Confirm password: ')
     salt = get_salt()
-    key = PBKDF2(password, salt, 32, count = 100000)
+    key = PBKDF2(password, salt, 32, count = 5000)
     password = ''
     confirm_password = ''
     
@@ -223,11 +222,13 @@ def retrieve_password_dialog():
         if resp == 'url':
             print('enter the url (ex: www.google.com)')
             resp = input('> ')
-            return retrieve_encrypted_data_url(resp)
+            decrypt_password(retrieve_encrypted_data_url(resp))
+            break
         elif resp == 'username':
             print('enter the username (ex: jsmith)')
             resp = input('> ')
-            return retrieve_encrypted_data_username(resp)
+            decrypt_password(retrieve_encrypted_data_username(resp))
+            break
             
 
 """
@@ -237,7 +238,7 @@ def retrieve_encrypted_data_url(url):
     fi = open('.__PASS__.', 'rb')
     data = fi.readlines()
     fi.close()
-    for i in range(0, len(data), 5):
+    for i in range(1, len(data), 5):
         print(data[i].decode('utf-8'))
         if data[i].decode('utf-8').strip('\n') == 'URL:' + url:
             # return (data[i+2], data[i+3])
@@ -267,12 +268,12 @@ def retrieve_encrypted_data_username(username):
     data = fi.readlines()
     fi.close()
     accounts = {}
-    for i in range(0, len(data)):
+    for i in range(2, len(data), 5):
         data[i] = str(data[i].decode('utf-8').strip('\n'))
         # data[i] = data[i].strip()
         if data[i] == "USERNAME:" + username:
             # accounts.append(data[i-1]) # url is before username
-            clean = clean_return_val(data[i-1])
+            clean = clean_return_val(data[i-1].decode('utf-8'))
             accounts[clean] = i-1
     if len(accounts) > 1:
         print('There are several accounts associated with the username ' + username)
@@ -299,13 +300,14 @@ def retrieve_encrypted_data_username(username):
         print('The username ' + username + ' is not associated with any accounts')
 
 def decrypt_password(enc_stuff):
-    #if we just want to pass both as one param:
     enc_password = enc_stuff[0]
+    enc_password = enc_password[0:len(enc_password) - 1]
     enc_nonce = enc_stuff[1]
+    enc_nonce = enc_nonce[0:len(enc_nonce) - 1]
+
     salt = get_salt()
     password = getpass.getpass('Enter your master password: ')
-    key = PBKDF2(password, salt, 32, count=100000)
-    #remove password from memory
+    key = PBKDF2(password, salt, 32, count=5000)
     ecb_cipher = AES.new(key, AES.MODE_ECB)
     nonce = ecb_cipher.decrypt(enc_nonce)[0:int(AES.block_size/2)]
     # intialize a counter with the nonce as prefix and initial counter value 0
@@ -314,10 +316,11 @@ def decrypt_password(enc_stuff):
     key = ''
     nonce = ''
     #remove key, nonce from memory
-    password = ctr_cipher.decrypt(enc_password).decode('utf-8')
+    password = ctr_cipher.decrypt(enc_password)
+    password = password.decode('utf-8')
     password = remap_password(password)
     #copy password to clipboard
-   # pyperclip.copy(password)
+    pyperclip.copy(password)
     print(password)
     password = ''
     return
