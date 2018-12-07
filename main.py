@@ -74,6 +74,9 @@ def is_first_session():
 
 
 def write_salt():
+    p_fi = open('.__PASS__.', 'w')
+    p_fi.close()
+
     salt = Random.get_random_bytes(8)
     fi = open('.__META__.', 'wb')
     fi.write(salt)
