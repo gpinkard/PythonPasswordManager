@@ -14,10 +14,12 @@ import getpass
 import sys
 import pyperclip
 from Crypto.Random import get_random_bytes
-from Crypto.Random import random
+from Crypto import Random
 from Crypto.Cipher import AES
+from Crypto.Protocol.KDF import *
 from Crypto.Util import Padding
 from Crypto.Util import Counter
+
 from mapping import *
 
 
@@ -56,7 +58,8 @@ def begin_session():
     if password != confirm_password:
         print('Passwords do not match.\n')
         quit()
-    # derive key, return key
+        # derive key, return key
+    
 
 
 def get_cmd():
@@ -161,7 +164,8 @@ def enc_password():
     password = getpass.getpass("Enter the account password: ")
     mapped_password = map_password(password)
     
-    nonce = Random.get_random_bytes(AES.block_size/2)
+    # there is something wrong here
+    nonce = Random.get_random_bytes(int(AES.block_size/2))
     counter = Counter.new(4*AES.block_size, prefix = nonce, initial_value = 0)
     cipher = AES.new(key, AES.MODE_CTR, counter=counter)
 
@@ -174,7 +178,6 @@ def enc_random_password():
     password = getpass.getpass('Enter your master password: ')
     password = getpass.getpass('Master password: ')
     confirm_password = getpass.getpass('Confirm password: ')
-        quit()
     salt = get_salt()
     key = PBKDF2(password, salt, 32, count = 5000)
     password = ''
@@ -206,7 +209,7 @@ retrieves encryped password and iv as a tuple given a URL name
 """
 def retrieve_encrypted_data_url(url):
     fi = open('.__PASS__.', 'r')
-    data = fi.read('\n')
+    data = fi.readline()
     fi.close()
     for i in range(0, len(data)):
         if data[i] == url:
@@ -220,7 +223,7 @@ BIG AND UGLY :o
 """
 def retrieve_encrypted_data_username(username):
     fi = open('.__PASS__.', 'r')
-    data = fi.read('\n')
+    data = fi.readline()
     fi.close()
     accounts = {}
     for i in range(0, len(data)):
@@ -238,7 +241,7 @@ def retrieve_encrypted_data_username(username):
             ctr += 1
         while(True):
             ind = input('> ')
-            if ind > 0 and < len(accounts + 1):
+            if ind > 0 and ind < len(accounts + 1):
                 ind_account = accounts[tmp[ind]]
                 print(data[ind_account+2], data[ind_account+3])
                 return (data[ind_account+2], data[ind_account+3])
@@ -286,7 +289,7 @@ def delete_password_dialog():
 
 def find_domain_ind(domain):
     fi = file.open('.__PASS__.', 'r')
-    data = fi.read()
+    data = fi.readline()
     fi.close()
     for i in range(0, len(data)):
         if i % 4 == 0 and old_data[i] == account_url:
@@ -299,7 +302,7 @@ deletes the specified password (account_url) from the password file
 """
 def delete_password(domain):
     fi = file.open('.__PASS__.', 'r')
-    old_data = fi.read('\n')
+    old_data = fi.readline()
     fi.close()
     new_data = ''
     """
