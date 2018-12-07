@@ -12,7 +12,7 @@ iv
 import os.path
 import getpass
 import sys
-import pyperclip
+#import pyperclip
 from Crypto.Random import get_random_bytes
 from Crypto import Random
 from Crypto.Cipher import AES
@@ -26,10 +26,14 @@ from mapping import *
 def main():
     print('\n=== Python Password Manager ===\n')
     key = ''
+    '''
     if is_first_session():
         key = first_session()
     else:
         key = begin_session()
+        '''
+    if is_first_session():
+        write_salt()
     while(True):
         get_cmd()
 
@@ -47,8 +51,8 @@ def first_session():
         if password != confirm_password:
             print('Passwords do not match.\n')
             password = ''
-    # derive key, hash
-    # return key
+
+    write_salt()
 
 
 def begin_session():
@@ -93,7 +97,7 @@ def is_first_session():
 
 def write_salt():
     fi = open('.__META__.')
-    salt = Random.get_random_bytes(AES.block_size)
+    salt = Random.get_random_bytes(8)
     fi = open('.__META__.', 'w')
     fi.write(salt)
 
@@ -110,21 +114,18 @@ def add_account():
     enc_result = ''
     url = query_url()
     account_id = query_account_id()
-    query_random_pass() 
+    enc_result = query_random_pass() 
     enc_pass = enc_result[0]
     enc_nonce = enc_result[1]
     #write url, account_id, enc_pass, enc_nonce to password file
 
 def query_random_pass():
-    while(True):
-        print('Would you like a password randomly generated for this account? [y/N]')
-        resp = input('> ').lower()
-        if resp == 'y':
-            enc_result = enc_random_password()
-            return
-        else:
-            enc_result = enc_password()
-            return
+    print('Would you like a password randomly generated for this account? [y/N]')
+    resp = input('> ').lower()
+    if resp == 'y':
+        enc_result = enc_random_password()
+    else:
+        enc_result = enc_password()
     
     return enc_result # tuple
 
@@ -164,13 +165,16 @@ def enc_password():
     password = getpass.getpass("Enter the account password: ")
     mapped_password = map_password(password)
     
-    # there is something wrong here
     nonce = Random.get_random_bytes(int(AES.block_size/2))
+    padded_nonce = nonce
+    for x in range(int(AES.block_size/2)):
+        padded_nonce += b'\x00'
+        
     counter = Counter.new(4*AES.block_size, prefix = nonce, initial_value = 0)
     cipher = AES.new(key, AES.MODE_CTR, counter=counter)
 
     ecb_cipher = AES.new(key, AES.MODE_ECB)
-    encrypted_nonce = ecb_cipher.encrypt(nonce)
+    encrypted_nonce = ecb_cipher.encrypt(padded_nonce)
 
     encrypted_password = cipher.encrypt(mapped_password.encode('utf-8'))
     return (encrypted_password, encrypted_nonce)
@@ -200,11 +204,15 @@ def enc_random_password():
     mapped_password = map_password(password)
     
     nonce = Random.get_random_bytes(AES.block_size/2)
+    padded_nonce = nonce
+    for x in range(int(AES.block_size/2)):
+        padded_nonce += b'\x00'
+
     counter = Counter.new(4*AES.block_size, prefix = nonce, initial_value = 0)
     cipher = AES.new(key, AES.MODE_CTR, counter=counter)
 
     ecb_cipher = AES.new(key, AES.MODE_ECB)
-    encrypted_nonce = ecb_cipher.encrypt(nonce)
+    encrypted_nonce = ecb_cipher.encrypt(padded_nonce)
 
     encrypted_password = cipher.encrypt(mapped_password.encode('utf-8'))
     return (encrypted_password, encrypted_nonce)
