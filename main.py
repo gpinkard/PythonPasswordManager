@@ -232,15 +232,20 @@ def retrieve_password_dialog():
         if resp == 'url':
             print('enter the url (ex: www.google.com)')
             resp = input('> ')
-            enc_data = retrieve_encrypted_data_url(resp)
-            if (enc_data == False):
-                continue
-            decrypt_password(enc_data)
+            pwd = retrieve_encrypted_data_url(resp)
+            if pwd != None:
+                decrypt_password(pwd)
+            else:
+                print(resp + ' is not a valid url')
             break
         elif resp == 'username':
             print('enter the username (ex: jsmith)')
             resp = input('> ')
-            decrypt_password(retrieve_encrypted_data_username(resp))
+            pwd = retrieve_encrypted_data_username(resp)
+            if pwd != None:
+                decrypt_password(pwd)
+            else:
+                print(resp + ' is not a valid username')
             break
             
 
@@ -259,7 +264,6 @@ def retrieve_encrypted_data_url(url):
             nonce = data[i+3]
             return (pwd, nonce)
     print('Error: ' + url + ' is not present in the password file')
-    return False
 
 
 """
@@ -295,7 +299,7 @@ def retrieve_encrypted_data_username(username):
         tmp = {}
         ctr = 1
         for acc in accounts.items():
-            print(str(ctr) + ': ' + str(acc))
+            print(str(ctr) + ': ' + str(acc[0]))
             tmp[ctr] = acc[1]
             ctr += 1
         while(True):
