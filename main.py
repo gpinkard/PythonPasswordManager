@@ -26,7 +26,6 @@ from mapping import *
 def main():
     print('\n=== Python Password Manager ===\n')
     key = ''
-    write_salt()
     if is_first_session():
         first_session()
     while(True):
@@ -75,6 +74,8 @@ def is_first_session():
 
 
 def write_salt():
+
+    
     p_fi = open('.__PASS__.', 'w')
     p_fi.close()
 
@@ -161,7 +162,7 @@ def enc_password():
         print('Passwords do not match.\n')
         quit()
     salt = get_salt()
-    key = PBKDF2(password, salt, 32, count = 5000)
+    key = PBKDF2(password, salt, 32, count = 100000)
     password = ''
     confirm_password = ''
 
@@ -188,7 +189,7 @@ def enc_random_password():
     password = getpass.getpass('Enter your master password: ')
     confirm_password = getpass.getpass('Confirm password: ')
     salt = get_salt()
-    key = PBKDF2(password, salt, 32, count = 5000)
+    key = PBKDF2(password, salt, 32, count = 100000)
     password = ''
     confirm_password = ''
     
@@ -234,14 +235,14 @@ def retrieve_password_dialog():
 retrieves encryped password and iv as a tuple given a URL name
 """
 def retrieve_encrypted_data_url(url):
-    fi = open('.__PASS__.', 'r')
+    fi = open('.__PASS__.', 'rb')
     data = fi.readlines()
     fi.close()
     for i in range(0, len(data)):
         if data[i].decode('utf-8') == 'URL:' + url:
             # return (data[i+2], data[i+3])
-            pwd = clean_return_val(data[i+2].decode('utf-8'))
-            nonce = clean_return_val(data[i+3].decode('utf-8'))
+            pwd = clean_return_val(data[i+2])
+            nonce = clean_return_val(data[i+3])
             return (pwd, nonce) 
     print('Error: ' + url + ' is not present in the password file')
 
@@ -305,7 +306,7 @@ def decrypt_password(enc_stuff):
     enc_nonce = enc_stuff[1]
     salt = get_salt()
     password = getpass.getpass('Enter your master password: ')
-    key = PBKDF2(password, salt, 32, count=5000)
+    key = PBKDF2(password, salt, 32, count=100000)
     #remove password from memory
     ecb_cipher = AES.new(key, AES.MODE_ECB)
     nonce = ecb_cipher.decrypt(enc_nonce)[0:int(AES.block_size/2)]
