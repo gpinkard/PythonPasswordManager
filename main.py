@@ -32,18 +32,21 @@ def main():
 
 
 def first_session():
-    print('Welcome. Please enter a secure master password.\nThis password must be at least 10 characters in length.')
-    password = 'password' 
-    confirm_password = 'confirm'
-    while password != confirm_password:
-        while len(password) < 10:
-            password = getpass.getpass('Master password: ')
-            if len(password) < 10:
-                print('Master password is less than 10 characters in length.')
-        confirm_password = getpass.getpass('Confirm password: ')
-        if password != confirm_password:
-            print('Passwords do not match.\n')
-            password = ''
+    print("""
+    Welcome to the Python Password Manager. Since this is your
+    first time using this program, think of a \'master\' password.
+    This password will be used any time you want to add, delete,
+    or retrieve a passsword for a site. This password is never
+    stored, so it is up to you to remember it and type it in
+    correctly. Make a strong password, with at least ten
+    characters, and do not use obvious personal facts (name,
+    birthdays, sportsteams), or weak passwords (p@ssword, 1234five
+    asdfasdfasdf, etc.). 
+
+    Please also make sure that you have pycryptodome and pyperclip
+    for python3 installed on your machine.
+    """)
+    x = input('Press any key to continue.')
     write_salt()
 
 
@@ -115,7 +118,7 @@ def add_account():
 def query_random_pass():
     enc_result = ''
     while(True):
-        print('Would you like a password randomly generated for this account? [y/n]')
+        print('Would you like a password randomly generated for this account (generally more secure)? [y/n]')
         resp = input('> ').lower()
         if resp == 'y':
             enc_result = enc_random_password()
@@ -417,11 +420,11 @@ def get_ind_username(username):
 def print_help():
     print("""
     Python Password Manager Help Dialog\n
-    add - [domain] add new username/domain and password combination
-    delete [domain] - remove a username/domain and password combination
+    add - add new username/domain and password combination.
+    delete - remove a username/domain and password combination
     help - print this help
     quit - exit this program
-    retrieve [domain] - retrieve password associated with domain\n
+    retrieve - retrieve password associated with a specified domain\n
     """)
 
 
