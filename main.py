@@ -112,7 +112,8 @@ def add_account():
     pass_file.write(fi_contents)
     pass_file.close()
 
-    print('Account successfully added.')
+    print('Account successfully added.\n')
+
     
 def query_random_pass():
     enc_result = ''
@@ -191,11 +192,7 @@ def enc_random_password():
     password = ''
     confirm_password = ''
     
-    password_length = 0
-    while password_length < 8:
-        password_length = int(input("Enter the desired length of the account password (minimum 8) :"))
-        if password_length < 8:
-            print("Password must be at least 8 characters long.")
+    password_length = 16
 
     for x in range(password_length):
         random_ascii_value = random.randint(33,126)
