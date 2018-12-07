@@ -12,7 +12,7 @@ nonce
 import os.path
 import getpass
 import sys
-#import pyperclip
+import pyperclip
 from Crypto.Random import get_random_bytes
 from Crypto import Random
 from Crypto.Cipher import AES
@@ -73,8 +73,6 @@ def is_first_session():
 
 
 def write_salt():
-
-    
     p_fi = open('.__PASS__.', 'w')
     p_fi.close()
 
@@ -106,7 +104,7 @@ def add_account():
 
     encoded_new_line = '\n'.encode('utf-8')
 
-    fi_contents +=  encoded_new_line + url + account_id + enc_pass + encoded_new_line + enc_nonce + encoded_new_line
+    fi_contents +=  url + account_id + enc_pass + encoded_new_line + enc_nonce + encoded_new_line + encoded_new_line
 
     pass_file = open('.__PASS__.', 'wb')
     pass_file.write(fi_contents)
@@ -217,17 +215,22 @@ def enc_random_password():
 
 
 def retrieve_password_dialog():
+    enc_data = ''
     while(True):
         print('type \'url\' to retrieve by URL, or \'username\' to retrieve by username')
         resp = input('> ')
         if resp == 'url':
             print('enter the url (ex: www.google.com)')
             resp = input('> ')
-            return retrieve_encrypted_data_url(resp)
+            enc_data = retrieve_encrypted_data_url(resp)
+            break 
         elif resp == 'username':
             print('enter the username (ex: jsmith)')
             resp = input('> ')
-            return retrieve_encrypted_data_username(resp)
+            enc_data = retrieve_encrypted_data_username(resp)
+            break
+
+    decrypt_password(enc_data)
             
 
 """
@@ -267,7 +270,7 @@ def retrieve_encrypted_data_username(username):
     data = fi.readlines()
     fi.close()
     accounts = {}
-    for i in range(0, len(data)):
+    for i in range(1, len(data), 5):
         data[i] = str(data[i].decode('utf-8').strip('\n'))
         # data[i] = data[i].strip()
         if data[i] == "USERNAME:" + username:
@@ -302,6 +305,9 @@ def decrypt_password(enc_stuff):
     #if we just want to pass both as one param:
     enc_password = enc_stuff[0]
     enc_nonce = enc_stuff[1]
+    enc_password = enc_password[:-1]
+    enc_nonce = enc_nonce[:-1]
+    print(enc_nonce)
     salt = get_salt()
     password = getpass.getpass('Enter your master password: ')
     key = PBKDF2(password, salt, 32, count=100000)
@@ -317,7 +323,7 @@ def decrypt_password(enc_stuff):
     password = ctr_cipher.decrypt(enc_password).decode('utf-8')
     password = remap_password(password)
     #copy password to clipboard
-   # pyperclip.copy(password)
+    pyperclip.copy(password)
     print(password)
     password = ''
     return
