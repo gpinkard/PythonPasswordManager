@@ -335,34 +335,43 @@ def decrypt_password(enc_stuff):
 def delete_password_dialog():
     print('Type the domain of the password you wish to delete')
     domain = input('> ')
-    exists = find_domain_ind(domain)
-    if exists != -1:
-        print('Are you sure you want to delete ' + domain + '[y/n]')
-        resp = input('> ').toLower()
-        if resp == 'y':
-            delete_password()
-    else:
-        print(domain + ' was not found in the password file')
+    print('Are you sure you want to delete ' + domain + '[y/N]')
+    resp = input('> ').lower()
+    if resp == 'y':
+        ind = get_ind(domain)
+        if ind != -1:
+            delete_password(domain, ind)
+        else:
+            print(domain + ' is not a valid domain')
 
         
 """
 deletes the specified password (account_url) from the password file
 """
-def delete_password(domain):
-    fi = file.open('.__PASS__.', 'rb')
+def delete_password(domain, ind):
+    fi = open('.__PASS__.', 'r')
     old_data = fi.readlines()
     fi.close()
     new_data = ''
-    ind = 0
-    for i in range(0, len(old_data)):
-        if old_data[i].decode('utf-8').strip() == 'URL:' + domain:
-            i += 3
-        if i < len(old_data):
-            new_data.append(data[i])
-    open('.__PASS__.', 'wb').close()
-    fi = file.open('.__PASS__.', 'wb')
-    fi.write(new_data)
+    if ind == 0:
+        new_data = old_data[4:]
+    else:
+        new_data = old_data[0:ind] + old_data[ind+4:]
+    fi = open('.__PASS__.', 'w')
+    for l in new_data:
+        fi.write(str(l))
     fi.close()
+    print('successfully deleted ' + domain)
+
+
+def get_ind(domain):
+    fi = open('.__PASS__.', 'rb')
+    data = fi.readlines()
+    fi.close()
+    for i in range(0, len(data)):
+        if data[i].decode('utf-8').strip('\n') == 'URL:' + domain:
+            return i
+    return -1
 
 
 def print_help():
