@@ -276,18 +276,18 @@ def retrieve_encrypted_data_username(username):
             accounts[clean] = i-1
     if len(accounts) > 1:
         print('There are several accounts associated with the username ' + username)
-        print('Type in the number associated with the account for retreival')
+        print('Type in the number associated with the account for retrieval')
         tmp = {}
         ctr = 1
         for acc in accounts.items():
-            print(str(ctr) + ': ' + str(acc))
+            print(str(ctr) + ': ' + str(acc[0]))
             tmp[ctr] = acc[1]
             ctr += 1
         while(True):
             ind = int(input('> '))
             if ind > 0 and ind < len(accounts) + 1:
                 ind_account = tmp[ind]
-                print(data[ind_account+2], data[ind_account+3])
+                # print(data[ind_account+2], data[ind_account+3])
                 return (data[ind_account+2], data[ind_account+3])
             else:
                 print(str(ind) + ' is not a valid index for retrieval')
@@ -323,8 +323,10 @@ def decrypt_password(enc_stuff):
     return
 
 def delete_password_dialog():
-    print('Type the domain of the password you wish to delete')
+    print('Type the domain of the password you wish to delete, or type \'c\' to cancel')
     domain = input('> ')
+    if domain == 'c' or 'C':
+        return
     print('Are you sure you want to delete ' + domain + '[y/N]')
     resp = input('> ').lower()
     if resp == 'y':
