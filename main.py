@@ -309,7 +309,6 @@ def retrieve_encrypted_data_username(username):
             except Exception:
                 print('input must be a valid number')
                 continue
-            print(ind)
             if ind > 0 and ind < len(accounts) + 1:
                 ind_account = tmp[ind]
                 return (data[ind_account+2], data[ind_account+3])
