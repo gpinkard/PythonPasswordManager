@@ -73,6 +73,9 @@ def is_first_session():
 
 
 def write_salt():
+    p_fi = open('.__PASS__.', 'w')
+    p_fi.close()
+
     salt = Random.get_random_bytes(8)
     fi = open('.__META__.', 'wb')
     fi.write(salt)
@@ -307,8 +310,7 @@ def find_domain_ind(domain):
         if i % 4 == 0 and old_data[i] == account_url:
             return i
     return -1
-    """
-    for 
+    """ 
 
 
 """
