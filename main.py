@@ -6,7 +6,7 @@ ENCRYPTED PASSWORD ENTRY FORMAT:
 URL
 username/id
 password
-iv
+nonce
 """
 
 import os.path
