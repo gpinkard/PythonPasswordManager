@@ -219,7 +219,7 @@ def retrieve_password_dialog():
         print('type \'url\' to retrieve by URL, or \'username\' to retrieve by username')
         resp = input('> ')
         if resp == 'url':
-            print('enter the url (ex: www.facebook.com)')
+            print('enter the url (ex: www.google.com)')
             resp = input('> ')
             return retrieve_encrypted_data_url(resp)
         elif resp == 'username':
