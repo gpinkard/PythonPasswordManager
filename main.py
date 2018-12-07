@@ -12,7 +12,7 @@ nonce
 import os.path
 import getpass
 import sys
-#import pyperclip
+import pyperclip
 from Crypto.Random import get_random_bytes
 from Crypto import Random
 from Crypto.Cipher import AES
@@ -160,7 +160,7 @@ def enc_password():
         print('Passwords do not match.\n')
         quit()
     salt = get_salt()
-    key = PBKDF2(password, salt, 32, count = 5000)
+    key = PBKDF2(password, salt, 32, count = 100000)
     password = ''
     confirm_password = ''
 
@@ -187,7 +187,7 @@ def enc_random_password():
     password = getpass.getpass('Enter your master password: ')
     confirm_password = getpass.getpass('Confirm password: ')
     salt = get_salt()
-    key = PBKDF2(password, salt, 32, count = 5000)
+    key = PBKDF2(password, salt, 32, count = 100000)
     password = ''
     confirm_password = ''
     
@@ -307,7 +307,7 @@ def decrypt_password(enc_stuff):
 
     salt = get_salt()
     password = getpass.getpass('Enter your master password: ')
-    key = PBKDF2(password, salt, 32, count=5000)
+    key = PBKDF2(password, salt, 32, count=100000)
     ecb_cipher = AES.new(key, AES.MODE_ECB)
     nonce = ecb_cipher.decrypt(enc_nonce)[0:int(AES.block_size/2)]
     # intialize a counter with the nonce as prefix and initial counter value 0
