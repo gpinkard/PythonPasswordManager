@@ -26,12 +26,6 @@ from mapping import *
 def main():
     print('\n=== Python Password Manager ===\n')
     key = ''
-    '''
-    if is_first_session():
-        key = first_session()
-    else:
-        key = begin_session()
-        '''
     if is_first_session():
         write_salt()
     while(True):
@@ -69,7 +63,7 @@ def get_cmd():
     if cmd == 'add':
         add_account()
     elif cmd == 'delete':
-        delete_password()
+        delete_password_dialog()
     elif cmd == 'help':
         print_help()
     elif cmd == 'quit':
@@ -80,7 +74,6 @@ def get_cmd():
     else:
         print(cmd + ' is not a recognized command. Try \'help\'.')
 
-# to implement
 
 def is_first_session():
     if os.path.exists('.__META__.'):
@@ -126,8 +119,10 @@ def query_random_pass():
         resp = input('> ').lower()
         if resp == 'y':
             enc_result = enc_random_password()
+            break
         elif resp == 'n':
             enc_result = enc_password
+            break
         else:
             print('an explicit y or n is required')
     return enc_result # tuple
