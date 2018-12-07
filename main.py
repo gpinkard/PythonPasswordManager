@@ -73,6 +73,8 @@ def is_first_session():
 
 
 def write_salt():
+
+    
     p_fi = open('.__PASS__.', 'w')
     p_fi.close()
 
@@ -109,6 +111,9 @@ def add_account():
     pass_file = open('.__PASS__.', 'wb')
     pass_file.write(fi_contents)
     pass_file.close()
+
+    print('Account successfully added.\n')
+
     
 def query_random_pass():
     enc_result = ''
@@ -156,7 +161,7 @@ def enc_password():
         print('Passwords do not match.\n')
         quit()
     salt = get_salt()
-    key = PBKDF2(password, salt, 32, count = 5000)
+    key = PBKDF2(password, salt, 32, count = 100000)
     password = ''
     confirm_password = ''
 
@@ -183,15 +188,11 @@ def enc_random_password():
     password = getpass.getpass('Enter your master password: ')
     confirm_password = getpass.getpass('Confirm password: ')
     salt = get_salt()
-    key = PBKDF2(password, salt, 32, count = 5000)
+    key = PBKDF2(password, salt, 32, count = 100000)
     password = ''
     confirm_password = ''
     
-    password_length = 0
-    while password_length < 8:
-        password_length = int(input("Enter the desired length of the account password (minimum 8) :"))
-        if password_length < 8:
-            print("Password must be at least 8 characters long.")
+    password_length = 16
 
     for x in range(password_length):
         random_ascii_value = random.randint(33,126)
@@ -301,7 +302,7 @@ def decrypt_password(enc_stuff):
     enc_nonce = enc_stuff[1]
     salt = get_salt()
     password = getpass.getpass('Enter your master password: ')
-    key = PBKDF2(password, salt, 32, count=5000)
+    key = PBKDF2(password, salt, 32, count=100000)
     #remove password from memory
     ecb_cipher = AES.new(key, AES.MODE_ECB)
     nonce = ecb_cipher.decrypt(enc_nonce)[0:int(AES.block_size/2)]
