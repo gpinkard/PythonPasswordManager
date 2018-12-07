@@ -27,7 +27,7 @@ def main():
     print('\n=== Python Password Manager ===\n')
     key = ''
     if is_first_session():
-        write_salt()
+        first_session()
     while(True):
         get_cmd()
 
@@ -85,6 +85,7 @@ def get_salt():
     fi.close()
     return salt
 
+
 def add_account():
     url = 'URL: ' + query_url() + '\n'
     url = url.encode('utf-8')
@@ -127,6 +128,7 @@ def query_account_id():
         print('What is the username for the account you are adding?')
         resp = input('> ')
         account_id = resp
+        # this is a test
         print('Is ' + account_id + ' correct? [y/N]')
         resp = input('> ')
         if resp == 'y':
@@ -142,6 +144,7 @@ def query_url():
         resp = input('> ')
         if resp == 'y':
             return url
+
 
 def enc_password():
     #derive key from password
@@ -184,7 +187,7 @@ def enc_random_password():
     
     password_length = 0
     while password_length < 8:
-        password_length = input("Enter the desired length of the account password (minimum 8) :")
+        password_length = int(input("Enter the desired length of the account password (minimum 8) :"))
         if password_length < 8:
             print("Password must be at least 8 characters long.")
 
@@ -195,7 +198,7 @@ def enc_random_password():
 
     mapped_password = map_password(password)
     
-    nonce = Random.get_random_bytes(AES.block_size/2)
+    nonce = Random.get_random_bytes(int(AES.block_size/2))
     padded_nonce = nonce
     for x in range(int(AES.block_size/2)):
         padded_nonce += b'\x00'
@@ -299,10 +302,13 @@ def find_domain_ind(domain):
     fi = file.open('.__PASS__.', 'r')
     data = fi.readline()
     fi.close()
+    """
     for i in range(0, len(data)):
         if i % 4 == 0 and old_data[i] == account_url:
             return i
     return -1
+    """
+    for 
 
 
 """
