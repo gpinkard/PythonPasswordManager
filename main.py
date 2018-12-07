@@ -219,11 +219,15 @@ def enc_random_password():
 
 def retrieve_password_dialog():
     while(True):
-        print('type \'url\' to retrieve by URL, or \'username\'')
+        print('type \'url\' to retrieve by URL, or \'username\' to retrieve by username')
         resp = input('> ')
         if resp == 'url':
+            print('enter the url (ex: www.facebook.com)')
+            resp = ('> ')
             return retrieve_encrypted_data_url(resp)
         elif resp == 'username':
+            print('enter the username (ex: jsmith)')
+            resp = ('> ')
             return retrive_encrypted_data_username(resp)
             
 
