@@ -325,7 +325,7 @@ def delete_password_dialog():
 deletes the specified password (account_url) from the password file
 """
 def delete_password(domain):
-    fi = file.open('.__PASS__.', 'r')
+    fi = file.open('.__PASS__.', 'rb')
     old_data = fi.readlines()
     fi.close()
     new_data = ''
@@ -335,8 +335,8 @@ def delete_password(domain):
             i += 3
         if i < len(old_data):
             new_data.append(data[i])
-    open('.__PASS__.', 'w').close()
-    fi = file.open('.__PASS__.', 'w')
+    open('.__PASS__.', 'wb').close()
+    fi = file.open('.__PASS__.', 'wb')
     fi.write(new_data)
     fi.close()
 
