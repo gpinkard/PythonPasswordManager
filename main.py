@@ -16,7 +16,7 @@ import pyperclip
 from Crypto.Random import get_random_bytes
 from Crypto import Random
 from Crypto.Cipher import AES
-from Crypto.Protocol.KDF import *
+from Crypto.Protocol.KDF import PBKDF2
 from Crypto.Util import Padding
 from Crypto.Util import Counter
 
@@ -118,7 +118,6 @@ def add_account():
     pass_file.write(fi_contents)
     pass_file.close()
     
-
 def query_random_pass():
     enc_result = ''
     while(True):
@@ -129,9 +128,9 @@ def query_random_pass():
         elif resp == 'n':
             enc_result = enc_password
         else:
-            print('an explicit y or n is required')
-    return enc_result # tuple
 
+            print('an explicit y or n is required')
+  
 def query_account_id():
     while(True):
         print('What is the username for the account you are adding?')
